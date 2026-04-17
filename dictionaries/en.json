@@ -1,0 +1,36 @@
+{
+  "nav": {
+    "projects": "Projects",
+    "about": "About",
+    "contact": "Contact"
+  },
+  "hero": {
+    "title": "PORTFOLIO",
+    "year": "2026",
+    "name": "Celia Barbecho Pérez",
+    "role": "Junior Product Designer",
+    "tagline": "UX/UI designer with a graphic design background, product flows and AI integrated into the process.",
+    "cta": "View projects"
+  },
+  "about": {
+    "title": "Who am",
+    "highlight": "I?",
+    "bold_phrase": "putting usability first",
+    "p1": "Hi, I'm Celia, a UX/UI designer from Seville living in Madrid.",
+    "p2": "My work focuses on taking complex flows and transforming them into clean, consistent and easy-to-use interfaces.",
+    "p3": "Coming from graphic design, I place a lot of importance on visual composition and color theory, but always putting usability first. My goal is to design digital products that not only look good, but connect with people and solve real problems."
+  },
+  "projects": {
+    "title": "Projects",
+    "viewCase": "View prototype",
+    "role": "Role",
+    "tools": "Tools",
+    "type": "Type"
+  },
+  "contact": {
+    "title": "Let's talk",
+    "email": "lilydesigner0@gmail.com",
+    "linkedin": "LinkedIn",
+    "instagram": "@ux_yoyo"
+  }
+}

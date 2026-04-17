@@ -1,0 +1,70 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-cream: #f5f0e8;
+  --color-ink: #1a1a1a;
+  --color-red: #e63329;
+
+  /* Project worlds */
+  --color-try-bg: #e8d9b0;
+  --color-try-accent: #c4a970;
+  --color-saas-bg: #0d1b3e;
+  --color-saas-accent: #2152cc;
+  --color-malaje-bg: #111111;
+  --color-malaje-accent: #c9a84c;
+  --color-metro-bg: #f0f4ff;
+  --color-metro-accent: #1a4fd6;
+  --color-ricla-bg: #1e3d2a;
+  --color-ricla-accent: #c9856a;
+}
+
+:root {
+  --color-cream: #f5f0e8;
+  --color-ink: #1a1a1a;
+  --color-red: #e63329;
+}
+
+[data-theme="light"] {
+  --color-cream: #f5f0e8;
+  --color-ink: #1a1a1a;
+}
+
+[data-theme="dark"] {
+  --color-cream: #111111;
+  --color-ink: #f0ebe2;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+body {
+  background: var(--color-cream);
+  color: var(--color-ink);
+  font-family: var(--font-roca), Georgia, serif;
+  overflow-x: hidden;
+  cursor: none;
+}
+
+@media (pointer: coarse) {
+  body {
+    cursor: auto;
+  }
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-ink);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+
