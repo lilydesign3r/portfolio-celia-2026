@@ -27,7 +27,7 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: 'Celia Barbecho — Portfolio',
-  description: 'Junior Product Designer. UX/UI con base en diseño gráfico e IA integrada en el proceso.',
+  description: 'Product Designer. UX/UI con base en diseño gráfico e IA integrada en el proceso.',
 }
 
 export default async function LangLayout({
