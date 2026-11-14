@@ -195,6 +195,8 @@
   .cs .device img.cover { width: 100%; height: 100%; object-fit: cover; object-position: top; border-radius: 0; filter: saturate(.9); }
   .cs .device iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
   .cs .device.browser iframe { top: 30px; height: calc(100% - 30px); }
+  .cs .device iframe.scaled { left: 0; right: auto; bottom: auto; transform-origin: 0 0; }
+  .cs .device.phone.bare { border: 0; border-radius: 0; box-shadow: none; background: transparent; width: min(380px, 86vw); aspect-ratio: 380 / 760; overflow: visible; }
   .cs .device .play { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); white-space: nowrap; font: 600 15px var(--bfont);
     padding: 13px 22px; border-radius: 999px; background: var(--ink); color: var(--bg); text-decoration: none; box-shadow: 0 8px 22px rgba(0,0,0,.25); }
   .cs .device .play:hover { background: var(--acc); }
@@ -527,7 +529,7 @@
       <section class="result">
         <h2><small>THE RESULT</small>Better than telling you.</h2>
         <p>It's the Figma prototype exactly as it was tested in Maze: onboarding, home, chats and profiles.</p>
-        <div class="device phone"><img class="cover" src="assets/try/cs/pant_bienvenida.webp" alt="">
+        <div class="device phone" data-kind="figphone"><img class="cover" src="assets/try/cs/pant_bienvenida.webp" alt="">
           <a class="play js-proto" href="https://www.figma.com/proto/RswytnVWUudseLW1YYXHie/PROYECTO-FINAL-ENTREGABLE?page-id=1%3A3048&amp;node-id=161-1602&amp;p=f&amp;viewport=498%2C31%2C0.08&amp;t=F18dyf9TWpjiws25-1&amp;scaling=scale-down&amp;content-scaling=fixed&amp;starting-point-node-id=161%3A1602&amp;show-proto-sidebar=1"
              data-embed="https://embed.figma.com/proto/RswytnVWUudseLW1YYXHie/PROYECTO-FINAL-ENTREGABLE?page-id=1%3A3048&amp;node-id=161-1602&amp;starting-point-node-id=161%3A1602&amp;scaling=scale-down&amp;content-scaling=fixed&amp;hide-ui=1&amp;embed-host=share" target="_blank" rel="noopener">▶ Try the prototype</a></div>
       </section>
@@ -648,7 +650,7 @@
         <p>The clickable prototype, with the four categories and the photo swap when you hover over each product.</p>
         <div class="device browser"><img class="cover" src="assets/malaje/cs/home.webp" alt="">
           <a class="play js-proto" href="https://www.figma.com/proto/ynW3fhYtqiX1GEz48b5xeW/Malaje?node-id=8-148&amp;p=f&amp;viewport=207%2C86%2C0.12&amp;t=kqEjzfX3skeQaXoO-1&amp;scaling=min-zoom&amp;content-scaling=fixed&amp;starting-point-node-id=8%3A148&amp;page-id=8%3A147"
-             data-embed="https://embed.figma.com/proto/ynW3fhYtqiX1GEz48b5xeW/Malaje?node-id=8-148&amp;starting-point-node-id=8%3A148&amp;page-id=8%3A147&amp;scaling=min-zoom&amp;content-scaling=fixed&amp;hide-ui=1&amp;embed-host=share" target="_blank" rel="noopener">▶ Try the prototype</a></div>
+             data-embed="https://embed.figma.com/proto/ynW3fhYtqiX1GEz48b5xeW/Malaje?node-id=8-148&amp;starting-point-node-id=8%3A148&amp;page-id=8%3A147&amp;scaling=scale-down-width&amp;content-scaling=fixed&amp;hide-ui=1&amp;embed-host=share" target="_blank" rel="noopener">▶ Try the prototype</a></div>
       </section>
       <figure><img class="zoom" src="assets/malaje/cs/portada.webp" alt="Malaje store home page"><figcaption>The cover: the jewellery says the name before any text does.</figcaption></figure>
 
@@ -722,7 +724,7 @@
         <h2><small>THE RESULT</small>It's live.</h2>
         <p>Open it on desktop and drag the phone over a bottle.</p>
         <div class="device browser"><img class="cover" src="assets/wineup/cs/hero.webp" alt="">
-          <a class="play" href="https://wineup.world" target="_blank" rel="noopener">Open wineup.world ↗</a></div>
+          <a class="play js-proto" href="https://wineup.world" target="_blank" rel="noopener" data-embed="https://wineup.world" data-vw="1440">▶ Try the landing here</a></div>
       </section>
 
       <section>
@@ -804,7 +806,7 @@
       <section class="result">
         <h2><small>EL RESULTADO</small>Mejor que contártelo.</h2>
         <p>Es el prototipo de Figma tal cual se testeó en Maze: onboarding, inicio, chats y perfiles.</p>
-        <div class="device phone"><img class="cover" src="assets/try/cs/pant_bienvenida.webp" alt="">
+        <div class="device phone" data-kind="figphone"><img class="cover" src="assets/try/cs/pant_bienvenida.webp" alt="">
           <a class="play js-proto" href="https://www.figma.com/proto/RswytnVWUudseLW1YYXHie/PROYECTO-FINAL-ENTREGABLE?page-id=1%3A3048&amp;node-id=161-1602&amp;p=f&amp;viewport=498%2C31%2C0.08&amp;t=F18dyf9TWpjiws25-1&amp;scaling=scale-down&amp;content-scaling=fixed&amp;starting-point-node-id=161%3A1602&amp;show-proto-sidebar=1"
              data-embed="https://embed.figma.com/proto/RswytnVWUudseLW1YYXHie/PROYECTO-FINAL-ENTREGABLE?page-id=1%3A3048&amp;node-id=161-1602&amp;starting-point-node-id=161%3A1602&amp;scaling=scale-down&amp;content-scaling=fixed&amp;hide-ui=1&amp;embed-host=share" target="_blank" rel="noopener">▶ Probar el prototipo</a></div>
       </section>
@@ -925,7 +927,7 @@
         <p>El prototipo navegable, con las cuatro categorías y el cambio de foto al pasar por cada producto.</p>
         <div class="device browser"><img class="cover" src="assets/malaje/cs/home.webp" alt="">
           <a class="play js-proto" href="https://www.figma.com/proto/ynW3fhYtqiX1GEz48b5xeW/Malaje?node-id=8-148&amp;p=f&amp;viewport=207%2C86%2C0.12&amp;t=kqEjzfX3skeQaXoO-1&amp;scaling=min-zoom&amp;content-scaling=fixed&amp;starting-point-node-id=8%3A148&amp;page-id=8%3A147"
-             data-embed="https://embed.figma.com/proto/ynW3fhYtqiX1GEz48b5xeW/Malaje?node-id=8-148&amp;starting-point-node-id=8%3A148&amp;page-id=8%3A147&amp;scaling=min-zoom&amp;content-scaling=fixed&amp;hide-ui=1&amp;embed-host=share" target="_blank" rel="noopener">▶ Probar el prototipo</a></div>
+             data-embed="https://embed.figma.com/proto/ynW3fhYtqiX1GEz48b5xeW/Malaje?node-id=8-148&amp;starting-point-node-id=8%3A148&amp;page-id=8%3A147&amp;scaling=scale-down-width&amp;content-scaling=fixed&amp;hide-ui=1&amp;embed-host=share" target="_blank" rel="noopener">▶ Probar el prototipo</a></div>
       </section>
       <figure><img class="zoom" src="assets/malaje/cs/portada.webp" alt="Portada de la tienda Malaje"><figcaption>La portada: la joya dice el nombre antes que cualquier texto.</figcaption></figure>
 
@@ -1017,7 +1019,7 @@
         <h2><small>EL RESULTADO</small>Está publicada.</h2>
         <p>Entra en escritorio y arrastra el móvil por encima de una botella.</p>
         <div class="device browser"><img class="cover" src="assets/wineup/cs/hero.webp" alt="">
-          <a class="play" href="https://wineup.world" target="_blank" rel="noopener">Abrir wineup.world ↗</a></div>
+          <a class="play js-proto" href="https://wineup.world" target="_blank" rel="noopener" data-embed="https://wineup.world" data-vw="1440">▶ Probar la landing aquí</a></div>
       </section>
 
       <section>
@@ -1525,8 +1527,21 @@ const CAN_EMBED = location.protocol.startsWith("http") && !/claude\.ai|claudeuse
 caseEl.addEventListener("click", e => {
   const a = e.target.closest(".js-proto"); if (!a || !CAN_EMBED) return;
   e.preventDefault();
-  const f = document.createElement("iframe"); f.src = a.dataset.embed; f.allowFullscreen = true; f.title = T[lang].figma;
-  a.parentNode.appendChild(f); a.remove();
+  const box = a.parentNode, f = document.createElement("iframe"); f.allowFullscreen = true;
+  let src = a.dataset.embed;
+  if (src.includes("figma.com")) {   // fondo del prototipo = fondo de la página, para que no se vea una caja negra
+    const bg = getComputedStyle(caseEl.querySelector(".cs") || caseEl).backgroundColor.match(/\d+/g) || [247, 246, 243];
+    src += "&bg-color=" + bg.slice(0, 3).map(n => (+n).toString(16).padStart(2, "0")).join("");
+    f.title = T[lang].figma;
+  } else f.title = "wineup.world";
+  f.src = src;
+  if (box.dataset.kind === "figphone") box.classList.add("bare");
+  if (a.dataset.vw) {   // web real: se pinta a su ancho de escritorio y se escala para caber
+    const vw = +a.dataset.vw; f.classList.add("scaled");
+    const fitF = () => { const w = box.clientWidth, h = box.clientHeight - 30, k = w / vw; f.style.width = vw + "px"; f.style.height = (h / k) + "px"; f.style.transform = `scale(${k})`; };
+    fitF(); new ResizeObserver(fitF).observe(box);
+  }
+  box.appendChild(f); a.remove();
 });
 addEventListener("resize", fit); fit(); texts();
 
