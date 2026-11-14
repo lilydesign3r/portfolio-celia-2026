@@ -1532,12 +1532,12 @@ gallery.addEventListener("click", e => {
 });
 document.addEventListener("keydown", e => { if (e.key !== "Escape" || camOpen) return; if (lightbox.classList.contains("show")) return; if (gallery.classList.contains("show")) closeGallery(); });
 // prototipo dentro del marco: solo en tu dominio; en la vista previa de Claude (o en local) abre Figma en otra pestaña
-// en móvil la landing de escritorio dentro de un iframe tumba Safari: allí se abre en otra pestaña
+// en móvil nada se incrusta: la landing tumba Safari y los prototipos de Figma atrapan el scroll
 const SMALL = () => matchMedia("(max-width: 900px), (pointer: coarse)").matches;
 const CAN_EMBED = location.protocol.startsWith("http") && !/claude\.ai|claudeusercontent|anthropic/.test(location.hostname);
 caseEl.addEventListener("click", e => {
   const a = e.target.closest(".js-proto"); if (!a || !CAN_EMBED) return;
-  if (a.dataset.vw && SMALL()) return;
+  if (SMALL()) return;   // en móvil los prototipos se abren a pantalla completa en otra pestaña: dentro de la página atrapan el scroll
   e.preventDefault();
   const box = a.parentNode, f = document.createElement("iframe"); f.allowFullscreen = true;
   let src = a.dataset.embed;
