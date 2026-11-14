@@ -1395,6 +1395,8 @@ function fill(p) {   // pone el contenido y la marca del proyecto
   caseEl.className = caseEl.className.replace(/\bt-\S+/g, "").trim() + " t-" + p.id;
   casePoster.src = `assets/${p.id}/00.webp`; casePoster.alt = T[lang].poster + p[lang][0];
   document.getElementById("case-article").innerHTML = (document.getElementById("tpl-" + p.id + (lang === "en" ? "-en" : "")) || document.getElementById("tpl-" + p.id)).innerHTML;
+  if (SMALL()) document.querySelectorAll("#case-article [data-vw]").forEach(a => { a.textContent = lang === "en" ? "Open wineup.world ↗" : "Abrir wineup.world ↗";
+    const t = a.closest("section")?.querySelector("p"); if (t) t.textContent = lang === "en" ? "Open it on a computer and drag the phone over a bottle." : "Ábrela en un ordenador y arrastra el móvil por encima de una botella."; });
 }
 async function nextCase(id) {   // pasar al siguiente cartel sin volver a la mesa
   const p = PROJECTS.find(q => q.id === id); if (!p || !openP) return;
@@ -1529,9 +1531,12 @@ gallery.addEventListener("click", e => {
 });
 document.addEventListener("keydown", e => { if (e.key !== "Escape" || camOpen) return; if (lightbox.classList.contains("show")) return; if (gallery.classList.contains("show")) closeGallery(); });
 // prototipo dentro del marco: solo en tu dominio; en la vista previa de Claude (o en local) abre Figma en otra pestaña
+// en móvil la landing de escritorio dentro de un iframe tumba Safari: allí se abre en otra pestaña
+const SMALL = () => matchMedia("(max-width: 900px), (pointer: coarse)").matches;
 const CAN_EMBED = location.protocol.startsWith("http") && !/claude\.ai|claudeusercontent|anthropic/.test(location.hostname);
 caseEl.addEventListener("click", e => {
   const a = e.target.closest(".js-proto"); if (!a || !CAN_EMBED) return;
+  if (a.dataset.vw && SMALL()) return;
   e.preventDefault();
   const box = a.parentNode, f = document.createElement("iframe"); f.allowFullscreen = true;
   let src = a.dataset.embed;
