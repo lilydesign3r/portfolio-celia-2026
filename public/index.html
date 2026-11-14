@@ -1,0 +1,1697 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Celia Barbecho — Product Designer</title>
+<meta name="description" content="Portfolio de Celia Barbecho, product designer en Madrid. WineUp, TRY*, Malaje y cómo hice este portfolio.">
+<meta property="og:title" content="Celia Barbecho — Product Designer">
+<meta property="og:description" content="Una mesa de estudio con mis proyectos encima. Pasa, toca y abre lo que quieras.">
+<meta property="og:image" content="og.jpg">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#191816">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;600&family=Playpen+Sans:wght@500;600&family=DM+Serif+Display&family=Cormorant+Garamond:wght@500;600&family=Montserrat:wght@400;600&family=VT323&family=Alfa+Slab+One&family=Nothing+You+Could+Do&family=Schibsted+Grotesk:wght@400;600&family=Onest:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root { --bg: #bdb8af; --ink: #1d1c1a; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; overflow: hidden; background: var(--bg); font-family: Inter, system-ui, sans-serif; color: var(--ink); }
+  /* luz de estudio: viñeta suave sobre el fondo */
+  body::before { content: ""; position: fixed; inset: 0; pointer-events: none;
+    background: radial-gradient(ellipse at 40% 35%, rgba(255,255,255,.22), transparent 60%), radial-gradient(ellipse at 50% 120%, rgba(0,0,0,.18), transparent 60%); }
+
+  body > header { position: fixed; top: 0; left: 0; right: 0; z-index: 92; transition: background .3s; height: 64px; padding: 0 28px;
+    display: flex; align-items: center; justify-content: space-between;
+    background: linear-gradient(to bottom, rgba(25,24,22,.55), rgba(25,24,22,0)); color: #fff; }
+  body.ovl #btn-sort { display: none; }
+  body.ovl > header { background: rgba(25,24,22,.9); backdrop-filter: blur(8px); }
+  .name { cursor: pointer; font-family: Anton, sans-serif; font-size: 22px; letter-spacing: .02em; }
+  nav { display: flex; gap: 10px; align-items: center; }
+  nav button { font: 600 13px Inter, sans-serif; color: #fff; background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.35);
+    padding: 8px 14px; border-radius: 999px; cursor: pointer; backdrop-filter: blur(6px); }
+  nav button:hover, nav button[aria-pressed="true"] { background: #fff; color: var(--ink); }
+  .burger { display: none; }
+
+  /* escena: lienzo fijo de 1600x900 que se escala para caber sin scroll */
+  #stage { position: absolute; left: 50%; top: 50%; width: 1600px; height: 900px; transform-origin: 0 0; }
+  .obj { position: absolute; cursor: pointer; transition: transform .7s cubic-bezier(.2,.8,.2,1), left .7s cubic-bezier(.2,.8,.2,1), top .7s cubic-bezier(.2,.8,.2,1); }
+  .obj img { display: block; width: 100%; user-select: none; -webkit-user-drag: none; pointer-events: none; }
+  .obj:focus-visible { outline: 3px solid #fff; outline-offset: -40px; }
+  .poster { width: 380px; }
+  .poster:hover, .poster:focus-visible { z-index: 20; }
+
+  /* etiqueta de cinta con el nombre del proyecto */
+  .tag { position: absolute; left: 50%; bottom: -36px; transform: translate(-50%, 8px) rotate(-2deg); width: 250px;
+    background: #f4efe4; padding: 10px 14px 12px; box-shadow: 0 6px 14px rgba(0,0,0,.18); opacity: 0; transition: .25s; pointer-events: none; }
+  .tag::before { content: ""; position: absolute; top: -10px; left: 50%; width: 70px; height: 20px; transform: translateX(-50%) rotate(3deg);
+    background: rgba(255,255,255,.55); box-shadow: 0 1px 2px rgba(0,0,0,.08); }
+  .tag b { display: block; font-family: Anton, sans-serif; font-weight: 400; font-size: 20px; letter-spacing: .02em; }
+  .tag span { display: block; font-size: 12.5px; line-height: 1.35; margin-top: 3px; }
+  .tag i { display: block; font-style: normal; font-size: 11px; opacity: .6; margin-top: 5px; text-transform: uppercase; letter-spacing: .06em; }
+  .sorted .poster .tag, .sorted #mirror .tag { opacity: 0; }
+  .sorted #mirror .tag { bottom: -64px; transform: translate(-50%, 0) scale(1.16); transform-origin: 50% 0; }
+  /* nombre de los objetos, solo al ordenar */
+  .otag { position: absolute; left: 50%; bottom: calc(-30px / var(--s, 1)); transform: translateX(-50%) rotate(-2deg); white-space: nowrap;
+    background: #f4efe4; padding: .2em .7em .25em; font: 400 calc(19px / var(--s, 1))/1.2 Anton, sans-serif; letter-spacing: .02em; color: #1c1b19;
+    box-shadow: 0 5px 12px rgba(0,0,0,.18); opacity: 0; transition: opacity .25s; pointer-events: none; }
+  .sorted .otag { opacity: 0; }
+  .sorted .obj .hint { display: none; }
+  .sorted .poster .tag { bottom: -64px; transform: translate(-50%, 0) scale(1.16); transform-origin: 50% 0; }
+
+  /* pistas manuscritas en los objetos */
+  .hint { position: absolute; font: 600 19px "Playpen Sans", cursive; color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,.35); white-space: nowrap;
+    opacity: 0; transition: .25s; pointer-events: none; }
+  .obj:hover .hint, .obj:focus-visible .hint { opacity: 1; }
+
+  #phone { width: 240px; }
+  #phone .call { position: absolute; inset: 0; opacity: 0; transition: opacity .15s; }
+  #phone:hover .call, #phone:focus-visible .call { opacity: 1; }
+  #phone:hover .ring, #phone:focus-visible .ring { animation: ring 1.6s infinite; }
+  @keyframes ring {
+    0%, 40%, 100% { transform: translate(0,0) rotate(0); }
+    4% { transform: translate(-2px,1px) rotate(-.8deg); } 8% { transform: translate(2px,-1px) rotate(.8deg); }
+    12% { transform: translate(-2px,0) rotate(-.6deg); } 16% { transform: translate(2px,1px) rotate(.6deg); }
+    20% { transform: translate(-1px,-1px) rotate(-.4deg); } 24% { transform: translate(1px,0) rotate(.4deg); } 28% { transform: none; }
+  }
+  @media (prefers-reduced-motion: reduce) { #phone:hover .ring { animation: none; } .obj { transition: none; } }
+  #notebook { width: 300px; }
+  #mirror { width: 380px; }
+  #mirror .glass { position: absolute; left: 12%; top: 11.8%; width: 76%; height: 76.4%; overflow: hidden; cursor: default; }
+  #mirror .refl { position: absolute; left: 0; top: 0; width: 18px; opacity: 0; pointer-events: none;
+    transform-origin: 0 0;  transition: opacity .2s; }
+  #mirror .glass:hover .refl { opacity: .45; filter: blur(.4px); }
+
+  /* panel de contacto: sube desde abajo, como descolgar */
+  #contact { position: fixed; left: 0; right: 0; bottom: 0; z-index: 94; background: #1d1c1a; color: #f4efe4; padding: 40px 48px 48px;
+    transform: translateY(100%); transition: transform .5s cubic-bezier(.2,.8,.2,1); }
+  #contact.open { transform: none; }
+  #contact h2 { font-family: Anton, sans-serif; font-weight: 400; font-size: 64px; line-height: 1; }
+  #contact p { margin-top: 18px; font-size: 18px; line-height: 1.8; }
+  #contact a { color: #f4efe4; }
+  #contact .close { position: absolute; top: 20px; right: 24px; background: none; border: 0; color: #f4efe4; font-size: 28px; cursor: pointer; }
+  #scrim { position: fixed; inset: 0; z-index: 93; background: rgba(0,0,0,.25); opacity: 0; pointer-events: none; transition: .3s; }
+  #scrim.open { opacity: 1; pointer-events: auto; }
+
+  /* nota de prototipo */
+  .note { position: fixed; left: 16px; bottom: 14px; z-index: 40; font-size: 12px; background: rgba(255,255,255,.7); padding: 6px 10px; border-radius: 6px; }
+
+  /* móvil: solo los carteles en columna + menú */
+  #list, #menu { display: none; }
+  @media (max-width: 760px) {
+    html, body { overflow: auto; }
+    #stage, .note, #btn-sort, #btn-contact { display: none; }
+    .burger { display: inline-block; }
+    #list { display: block; padding: 84px 20px 40px; }
+    #list figure { margin-bottom: 26px; cursor: pointer; }
+    #list .objs { display: grid; grid-template-columns: 1fr 1.25fr; gap: 18px; align-items: center; margin: 10px 0 20px; }
+    #list .objs figure { position: relative; margin: 0; }
+    #list .objs [data-obj="book"] img { transform: rotate(-6deg); filter: drop-shadow(0 12px 14px rgba(0,0,0,.35)); }
+    #list .objs [data-obj="cam"] img { transform: rotate(4deg); filter: drop-shadow(0 12px 14px rgba(0,0,0,.35)); }
+    #list .mhint { position: absolute; left: 50%; top: -14px; transform: translateX(-50%) rotate(-4deg); font: 600 18px "Playpen Sans", cursive; color: #fff; text-shadow: 0 1px 6px rgba(0,0,0,.5); white-space: nowrap; pointer-events: none; }
+    #list img { width: 100%; display: block; }
+    #list figcaption { display: none; background: #f4efe4; padding: 10px 14px; margin: -30px 20px 0; position: relative; box-shadow: 0 6px 14px rgba(0,0,0,.15); }
+    #list figcaption b { font-family: Anton, sans-serif; font-weight: 400; font-size: 20px; display: block; }
+    #list figcaption span { font-size: 14px; }
+    #menu { position: fixed; top: 64px; right: 16px; z-index: 95; background: #1d1c1a; border-radius: 12px; padding: 8px; display: none; }
+    #menu.open { display: block; }
+    #menu button[hidden] { display: none; }
+    #menu button { display: block; width: 100%; text-align: left; background: none; border: 0; color: #fff; font: 600 16px Inter; padding: 12px 16px; }
+  }
+  /* ---------- case study ---------- */
+  #stage { transition: filter .6s; }
+  body.reading #stage { filter: blur(8px) brightness(.8); }
+  .flyer { position: fixed; z-index: 90; pointer-events: none; transform-origin: 50% 50%;
+    transition: left .65s cubic-bezier(.2,.8,.2,1), top .65s cubic-bezier(.2,.8,.2,1), width .65s cubic-bezier(.2,.8,.2,1), transform .65s cubic-bezier(.2,.8,.2,1); }
+  #case { position: fixed; inset: 0; z-index: 80; overflow-y: auto; overscroll-behavior: contain; display: none; opacity: 0; transition: opacity .35s;
+    background: var(--bg); color: var(--ink); font: 17px/1.62 var(--bfont); }
+  #case.t-try { --bg: #F7F7F5; --ink: #2E2E2C; --acc: #F4A261; --grey: #6B7C85; --hfont: "DM Serif Display", serif; --hw: 400; --bfont: Inter, system-ui, sans-serif; }
+  #case.t-wineup { --bg: #EDEDEA; --ink: #15041F; --acc: #6E56CF; --grey: #6F6878; --hfont: Onest, sans-serif; --hw: 800; --bfont: Onest, Inter, system-ui, sans-serif; }
+  #case.t-malaje { --bg: #FBF8F6; --ink: #1A191E; --acc: #03417E; --grey: #7A7472; --hfont: "Cormorant Garamond", serif; --hw: 600; --bfont: Montserrat, system-ui, sans-serif; }
+  #case-article { transition: opacity .3s; } #case-article.fade { opacity: 0; }
+  #case.show { opacity: 1; }
+  #case .back { position: fixed; top: 80px; left: 22px; z-index: 5; font: 600 14px var(--bfont); color: var(--ink); background: color-mix(in srgb, var(--bg) 85%, transparent);
+    border: 1px solid rgba(46,46,44,.18); border-radius: 999px; padding: 9px 16px; cursor: pointer; backdrop-filter: blur(6px); }
+  #case .back:hover { background: var(--ink); color: var(--bg); }
+  .cs { display: grid; grid-template-columns: minmax(280px, 34vw) minmax(0, 700px); gap: 6vw; padding: 90px 6vw 120px; justify-content: center; }
+  .cs > *, .cs .hero > *, .cs section > * { min-width: 0; }
+  .cs aside { position: sticky; top: 70px; align-self: start; height: calc(100vh - 100px); display: flex; align-items: flex-start; justify-content: center; }
+  .cs aside img { width: 100%; max-height: 100%; object-fit: contain; object-position: top; }
+  .cs .kicker { font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--grey); }
+  .cs h1 { font: var(--hw) 112px/0.95 var(--hfont); margin: 10px 0 18px; }
+  .cs h1 b { color: var(--acc); font-weight: 400; }
+  .cs .lead { font-size: 22px; line-height: 1.45; max-width: 560px; }
+  .cs .hero { display: grid; grid-template-columns: 1fr 240px; gap: 28px; align-items: end; }
+  .cs .hero img { width: 100%; }
+  .cs dl { display: grid; grid-template-columns: auto 1fr; gap: 6px 18px; margin-top: 30px; font-size: 14.5px; border-top: 1px solid rgba(46,46,44,.15); padding-top: 18px; }
+  .cs dt { color: var(--grey); }
+  .cs section { margin-top: 110px; }
+  .cs section.result { margin-top: 56px; }
+  .cs h2 { font: var(--hw) 44px/1.08 var(--hfont); margin-bottom: 20px; }
+  .cs h2 small { display: block; font: 600 13px var(--bfont); letter-spacing: .1em; color: var(--acc); margin-bottom: 10px; }
+  .cs p + p { margin-top: 14px; }
+  .cs .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 24px; margin: 30px 0; }
+  .cs .stats b { display: block; font: var(--hw) 54px/1 var(--hfont); }
+  .cs .stats span { font-size: 14px; color: var(--grey); }
+  .cs .src { font-size: 13px; color: var(--grey); margin-top: 6px; }
+  .cs .bubbles { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 26px; }
+  .cs .bubble { background: #fff; border-radius: 18px 18px 18px 4px; padding: 12px 16px; box-shadow: 0 6px 18px rgba(0,0,0,.07); font-size: 15.5px; max-width: 330px; }
+  .cs .bubble:nth-child(even) { transform: rotate(1.2deg); } .cs .bubble:nth-child(odd) { transform: rotate(-1deg); }
+  .cs ul.ins { list-style: none; margin-top: 18px; }
+  .cs ul.ins li { padding: 14px 0 14px 34px; border-top: 1px solid rgba(46,46,44,.12); position: relative; }
+  .cs ul.ins li::before { content: "*"; position: absolute; left: 4px; top: 6px; color: var(--acc); font: var(--hw) 34px/1 var(--hfont); }
+  .cs blockquote { font: var(--hw) 30px/1.25 var(--hfont); margin: 34px 0; padding-left: 22px; border-left: 3px solid var(--acc); }
+  .cs blockquote cite { display: block; font: 14px var(--bfont); color: var(--grey); margin-top: 12px; font-style: normal; }
+  .cs blockquote.small { font-size: 23px; }
+  .cs .verbs { display: flex; gap: 12px; flex-wrap: wrap; margin: 24px 0; }
+  .cs .verbs span { font: var(--hw) 30px var(--hfont); padding: 6px 20px; border: 1.5px solid var(--ink); border-radius: 999px; }
+  .cs .verbs span:last-child { background: var(--acc); border-color: var(--acc); }
+  .cs figure { margin-top: 28px; }
+  .cs figure img { width: 100%; display: block; border-radius: 14px; }
+  .cs figcaption { font-size: 13.5px; color: var(--grey); margin-top: 10px; }
+  .cs .zoom { cursor: zoom-in; }
+  .cs .phones { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 28px; }
+  .cs .phones img { width: 100%; border-radius: 22px; box-shadow: 0 10px 28px rgba(0,0,0,.12); }
+  .cs .phones figcaption { text-align: center; }
+  .cs .two { display: grid; grid-template-columns: 1fr 1.6fr; gap: 20px; align-items: start; margin-top: 28px; }
+  .cs .heat { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 28px; }
+  .cs .heat img { border-radius: 16px; box-shadow: 0 8px 22px rgba(0,0,0,.1); }
+  .cs .hook { margin-top: 30px; font: var(--hw) 32px/1.2 var(--hfont); }
+  .cs .end { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 80px; padding-top: 30px; border-top: 1px solid rgba(46,46,44,.15); }
+  .cs .end button, .cs .end .btn { font: 600 15px var(--bfont); padding: 12px 20px; border-radius: 999px; border: 1.5px solid var(--ink); background: var(--ink); color: var(--bg); cursor: pointer; text-decoration: none; }
+  .cs .end .ghost { background: none; color: var(--ink); }
+  .cs a.inline { color: var(--acc); font-weight: 600; text-decoration: none; border-bottom: 1.5px solid currentColor; }
+  .cs .pages { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 22px; align-items: start; }
+  .cs .pages img { border-radius: 10px; box-shadow: 0 8px 22px rgba(0,0,0,.1); }
+  .cs .end button.soon { background: none; color: var(--grey); border-color: rgba(46,46,44,.25); cursor: default; }
+  /* prototipo incrustado en un marco */
+  .cs .device { margin-top: 28px; position: relative; overflow: hidden; background: #fff; box-shadow: 0 18px 40px rgba(0,0,0,.16); }
+  .cs .device.phone { width: min(320px, 80vw); aspect-ratio: 390 / 844; border: 11px solid #1b1b1d; border-radius: 46px; }
+  .cs .device.browser { width: 100%; aspect-ratio: 16 / 10.6; border-radius: 12px; border: 1px solid rgba(0,0,0,.12); padding-top: 30px; }
+  .cs .device.browser::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 30px; background: #efedeb;
+    background-image: radial-gradient(circle, #e0584f 5px, transparent 5.5px), radial-gradient(circle, #e9b33d 5px, transparent 5.5px), radial-gradient(circle, #5fb75a 5px, transparent 5.5px);
+    background-size: 18px 30px; background-repeat: no-repeat; background-position: 12px 0, 30px 0, 48px 0; }
+  .cs .device img.cover { width: 100%; height: 100%; object-fit: cover; object-position: top; border-radius: 0; filter: saturate(.9); }
+  .cs .device iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+  .cs .device.browser iframe { top: 30px; height: calc(100% - 30px); }
+  .cs .device .play { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); white-space: nowrap; font: 600 15px var(--bfont);
+    padding: 13px 22px; border-radius: 999px; background: var(--ink); color: var(--bg); text-decoration: none; box-shadow: 0 8px 22px rgba(0,0,0,.25); }
+  .cs .device .play:hover { background: var(--acc); }
+  /* ---------- cámara y galerías de Higgsfield ---------- */
+  #camera { width: 320px; z-index: 6; }
+  #camera .screen { position: absolute; left: 12.2%; top: 25%; width: 45.9%; height: 44%; overflow: hidden; background: #050506; }
+  #camera .screen img { width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity .12s; }
+  #camera .screen .osd { position: absolute; inset: 0; padding: 4px 6px; color: #fff; font: 700 8.5px/1.25 ui-monospace, Menlo, monospace;
+    text-shadow: 0 0 2px #000, 0 0 2px #000; opacity: 0; display: flex; flex-direction: column; justify-content: space-between; pointer-events: none; }
+  #camera .screen .osd div { display: flex; justify-content: space-between; }
+  #camera .screen::after { content: ""; position: absolute; inset: 0; background: linear-gradient(125deg, rgba(255,255,255,.14), transparent 40%); pointer-events: none; }
+  #camera:hover .screen img, #camera:focus-visible .screen img, #camera:hover .screen .osd, #camera:focus-visible .screen .osd { opacity: 1; }
+  #gallery { position: fixed; inset: 0; z-index: 86; background: #111; color: #eee; overflow-y: auto; display: none; opacity: 0; transition: opacity .3s; }
+  #gallery.show { opacity: 1; }
+  #gallery { top: 64px; }
+  #gallery header { position: sticky; top: 0; background: linear-gradient(#111 70%, rgba(17,17,17,0)); padding: 18px 26px 26px; display: flex; gap: 10px; align-items: center; z-index: 2; }
+  #gallery header .t { font: 400 26px Anton, sans-serif; letter-spacing: .02em; margin-right: auto; }
+  #gallery header .t small { font: 400 13px Inter; opacity: .6; margin-left: 10px; letter-spacing: 0; }
+  #gallery header button { font: 600 13px Inter; color: #eee; background: none; border: 1px solid rgba(255,255,255,.35); border-radius: 999px; padding: 8px 14px; cursor: pointer; }
+  #gallery header button[aria-pressed="true"], #gallery header button:hover { background: #eee; color: #111; }
+  #gallery .grp { padding: 0 26px 40px; } #gallery h4 { font: 600 13px Inter; letter-spacing: .1em; text-transform: uppercase; opacity: .6; margin: 6px 0 14px; }
+  #gallery .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  @media (max-width: 1000px) { #gallery .grid { grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 640px) { #gallery .grid { grid-template-columns: repeat(2, 1fr); gap: 8px; } #gallery .grp { padding: 0 14px 30px; } }
+  #gallery .grid img { width: 100%; height: auto; aspect-ratio: 3 / 4; object-fit: cover; display: block; border-radius: 8px; cursor: zoom-in; }
+  #gallery .vids { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 300px)); gap: 16px; }
+  #gallery video { width: 100%; border-radius: 12px; background: #000; display: block; }
+  #lightbox { z-index: 100; }
+  /* cámara ampliada con el menú en su pantalla */
+  #camzoom { position: fixed; inset: 0; z-index: 85; display: none; background: rgba(15,15,15,0); transition: background .45s; }
+  #camzoom.show { background: rgba(15,15,15,.55); backdrop-filter: blur(3px); }
+  #camzoom .big { position: absolute; left: 50%; top: 50%; width: min(92vw, 118vh); transform-origin: 0 0;
+    transition: transform .6s cubic-bezier(.2,.8,.2,1), opacity .35s; }
+  #camzoom .big > img { width: 100%; display: block; pointer-events: none; }
+  #camzoom .lcd { position: absolute; left: 12.2%; top: 25%; width: 45.9%; height: 44%; background: #0b0d12; overflow: hidden;
+    font-family: VT323, ui-monospace, monospace; color: #e9eef5; display: flex; flex-direction: column; opacity: 0; transition: opacity .25s .35s; }
+  #camzoom.show .lcd { opacity: 1; }
+  #camzoom .lcd .bar { display: flex; justify-content: space-between; padding: 2.5% 4%; font-size: clamp(14px, 2.1vw, 26px); background: #1d2a44; }
+  #camzoom .lcd .items { flex: 1; min-height: 0; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 100%; gap: 4%; padding: 4% 5% 2%; }
+  #camzoom .lcd button { all: unset; cursor: pointer; position: relative; border: 3px solid transparent; display: flex; flex-direction: column; overflow: hidden; background: #000; }
+  #camzoom .lcd button img { width: 100%; flex: 1 1 0; height: 0; min-height: 0; object-fit: cover; opacity: .75; }
+  #camzoom .lcd button > span { font-size: clamp(14px, 2vw, 26px); padding: 2% 6%; background: #0b0d12; white-space: nowrap; }
+  #camzoom .lcd button.sel { border-color: #f5b400; } #camzoom .lcd button.sel img { opacity: 1; }
+  #camzoom .lcd button.sel > span { background: #f5b400; color: #111; }
+  #camzoom .lcd .hint2 { font-size: clamp(12px, 1.7vw, 22px); padding: 1.5% 5% 3%; opacity: .8; display: flex; justify-content: space-between; }
+  #camzoom .lcd .hint2 [data-k] { cursor: pointer; font-weight: 400; padding: 0 .25em; border-radius: 4px; }
+  #camzoom .lcd .hint2 [data-k]:hover { background: #f5b400; color: #111; }
+  #camzoom .pad { position: absolute; left: 65.7%; top: 49.4%; width: 13.4%; aspect-ratio: 1; border-radius: 50%; opacity: 0; transition: opacity .3s .4s; }
+  #camzoom.show .pad { opacity: 1; }
+  #camzoom .pad button { all: unset; position: absolute; cursor: pointer; border-radius: 50%; }
+  #camzoom .pad button:hover { background: radial-gradient(closest-side, rgba(255,255,255,.55), rgba(255,255,255,0)); }
+  #camzoom .pad button:focus-visible { outline: 2px solid #f5b400; }
+  #camzoom .pad [data-k="l"] { left: 0; top: 30%; width: 32%; height: 40%; } #camzoom .pad [data-k="r"] { right: 0; top: 30%; width: 32%; height: 40%; }
+  #camzoom .pad [data-k="u"] { top: 0; left: 30%; width: 40%; height: 32%; } #camzoom .pad [data-k="d"] { bottom: 0; left: 30%; width: 40%; height: 32%; }
+  #camzoom .pad [data-k="ok"] { left: 32%; top: 32%; width: 36%; height: 36%; }
+  #camzoom .lcd::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(125deg, rgba(255,255,255,.12), transparent 40%),
+    repeating-linear-gradient(0deg, rgba(255,255,255,.03) 0 2px, transparent 2px 4px); }
+  #camzoom .big.enter { transition: transform .5s cubic-bezier(.6,0,.8,.4), opacity .45s .1s; opacity: 0; }
+  #camzoom .x { position: absolute; top: 80px; right: 22px; font: 600 14px Inter; color: #fff; background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.4);
+    border-radius: 999px; padding: 8px 14px; cursor: pointer; }
+  .cs .hscroll { overflow-x: auto; margin-top: 22px; border-radius: 12px; box-shadow: 0 10px 28px rgba(0,0,0,.1); background: #fff; }
+  .cs .hscroll img { height: 360px; width: auto; max-width: none; display: block; border-radius: 0; }
+  .cs .hscroll + .hscroll { margin-top: 14px; }
+  .cs .annobox { position: relative; width: max-content; }
+  .cs .annobox i { position: absolute; transform: translate(-50%, -50%); width: 30px; height: 30px; border-radius: 50%; background: var(--acc); color: #fff;
+    font: 700 14px/30px var(--bfont); text-align: center; font-style: normal; box-shadow: 0 0 0 4px rgba(110,86,207,.25); }
+  .cs ol.notes { list-style: none; counter-reset: n; margin-top: 18px; display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
+  .cs ol.notes li { counter-increment: n; background: #fff; border: 1px solid rgba(110,86,207,.25); border-left: 4px solid var(--acc); border-radius: 8px; padding: 12px 14px 12px 46px; position: relative; font-size: 14px; line-height: 1.5; }
+  .cs ol.notes li::before { content: counter(n); position: absolute; left: 12px; top: 12px; width: 24px; height: 24px; border-radius: 50%; background: var(--acc); color: #fff; font: 700 12px/24px var(--bfont); text-align: center; }
+  .cs ol.notes b { display: block; margin-bottom: 2px; }
+  .cs .chips, .cs .stickers { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
+  .cs .chips span { font: 600 13px var(--bfont); padding: 7px 14px; border-radius: 999px; border: 1.5px solid var(--ink); }
+  .cs .stickers span { font: 800 17px var(--bfont); padding: 9px 16px; background: #C8FF00; color: #15041F; border: 2px solid #15041F; border-radius: 10px; box-shadow: 3px 3px 0 #15041F; }
+  .cs .stickers span:nth-child(odd) { transform: rotate(-1.5deg); } .cs .stickers span:nth-child(even) { transform: rotate(1.2deg); }
+  #case.t-wineup .end .btn:first-child { background: #C8FF00; color: #15041F; border-color: #15041F; }
+  /* ---------- cuaderno: sobre mí ---------- */
+  #bookwrap { position: fixed; inset: 0; z-index: 85; display: none; background: rgba(15,15,15,0); transition: background .45s; perspective: 3600px; }
+  #bookwrap.show { background: rgba(15,15,15,.55); backdrop-filter: blur(3px); }
+  #book { --pw: min(38vw, calc((100vh - 170px) * .707)); position: absolute; left: 50%; top: calc(50% + 22px); width: calc(var(--pw) * 2); height: calc(var(--pw) * 1.414);
+    margin-left: calc(var(--pw) * -1); margin-top: calc(var(--pw) * -.74); transform-origin: 75% 50%; transform-style: preserve-3d;
+    transition: transform .6s cubic-bezier(.2,.8,.2,1); }
+  /* el cuaderno abierto renderizado en Blender, debajo de las hojas */
+  #book .bg { position: absolute; left: calc(var(--pw) * -.191); top: calc(var(--pw) * -.146); width: calc(var(--pw) * 2.382); height: calc(var(--pw) * 1.706);
+    background: url("assets/cuaderno/abierto.webp") center / 100% 100% no-repeat; opacity: 0; transition: opacity .35s; pointer-events: none; }
+  #bookwrap.opening #book .bg { opacity: 1; }
+  #book .bg { transform: translateZ(-2px); transition: opacity .25s; }
+  #book .pg.r.base { transform: translateZ(0); transition: box-shadow .25s; }
+  /* grosor y sombra del cuaderno cerrado: van en la hoja de abajo, no en la tapa (en 3D la sombra de la tapa se pintaba al lado) */
+  #bookwrap:not(.opening) #book .pg.r.base { box-shadow: 2px 2px 0 #ece8dd, 4px 3px 0 #d9d4c7, 6px 5px 0 #111113, 0 30px 60px rgba(0,0,0,.55), 0 8px 16px rgba(0,0,0,.35); }
+  #book .pg { position: absolute; top: 0; width: 50%; height: 100%; overflow: hidden; color: #222;
+    font: 400 calc(var(--pw) * .03)/1.45 Inter, sans-serif; background: #f2efe7 url("assets/cuaderno/hoja-d.webp") center / 100% 100%; }
+  #book .pg.l { left: 0; background-image: url("assets/cuaderno/hoja-i.webp"); }
+  #book .pg.r { right: 0; }
+  #book .pg > * { position: absolute; }
+  #book .pg.in { background: #19191b; box-shadow: inset -30px 0 40px -20px rgba(0,0,0,.7), inset 0 0 0 1px rgba(255,255,255,.04); }
+  #book .leaf { position: absolute; top: 0; left: 50%; width: 50%; height: 100%; transform-origin: 0 50%; transform-style: preserve-3d;
+    transition: transform .8s cubic-bezier(.45,.05,.3,1); }
+  #book .leaf > div { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+  #book .leaf .back { transform: rotateY(180deg); }
+  #book .leaf .front .pg, #book .leaf .back .pg { width: 100%; left: 0; right: auto; }
+  #book .leaf::after { content: ""; position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity .4s;
+    background: linear-gradient(90deg, rgba(0,0,0,.18), transparent 40%); }
+  #book .cover { position: absolute; inset: 0; background: #161618 url("assets/cuaderno/cover.webp") center / 100% 100%; border-radius: 0 4px 4px 0;
+    }
+  #book .pnum { font: 500 .9em "Playpen Sans", cursive; color: #8a8378; bottom: 3%; }
+  #book .pg.l .pnum { left: 6%; } #book .pg.r .pnum { right: 6%; }
+  /* --- interior del cuaderno: pegatinas, boli azul y texto. Sigue el lenguaje de la tapa (rojo pegatina, borde blanco) --- */
+  #book { --red: #e2475a; --sticker: #fcfbf7; --ink: #262626; --soft: #6b6964; --pen: #2340a0; --board: #232325; }
+  #book .pg { font-family: "Schibsted Grotesk", sans-serif; color: var(--ink); }
+  #book .pg.in { background: var(--board); }
+  #book .pen { font: 400 1.35em/1.25 "Nothing You Could Do", cursive; color: var(--pen); }
+  #book .pg.in .pen { color: #efece4; }
+  /* letras de pegatina, como el CELIA de la tapa */
+  #book .stl { display: flex; font: 400 3.3em/1 "Alfa Slab One", serif; color: var(--red); white-space: nowrap;
+    text-shadow: .07em 0 var(--sticker), -.07em 0 var(--sticker), 0 .07em var(--sticker), 0 -.07em var(--sticker),
+      .05em .05em var(--sticker), -.05em .05em var(--sticker), .05em -.05em var(--sticker), -.05em -.05em var(--sticker), 0 .1em .12em rgba(0,0,0,.3); }
+  #book .stl span { display: inline-block; }
+  #book .st { display: block; filter: drop-shadow(0 .3em .4em rgba(0,0,0,.3)); }
+  #book .txt p { line-height: 1.55; }
+  #book .txt p + p { margin-top: .8em; }
+  #book .ann { fill: none; stroke: var(--pen); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; overflow: visible; pointer-events: none; }
+  #book .pg.in .ann { stroke: #efece4; }
+  #book .tl { list-style: none; border-left: 1.5px solid var(--pen); padding: .2em 0 0; }
+  #book .tl li { position: relative; padding: 0 0 1.05em 1.5em; line-height: 1.4; }
+  #book .tl li::before { content: ""; position: absolute; left: -.43em; top: .32em; width: .75em; height: .75em; border-radius: 50%; background: var(--red); box-shadow: 0 0 0 .17em var(--sticker), 0 1px 3px rgba(0,0,0,.35); }
+  #book .tl .y { display: block; font: 400 .95em/1.2 "Alfa Slab One", serif; color: var(--red); }
+  #book .tl b { display: block; font-weight: 600; }
+  #book .tl span { color: var(--soft); }
+  #book .blk h4 { font: 400 1.25em/1.1 "Nothing You Could Do", cursive; color: var(--pen); margin-bottom: .25em; }
+  #book .blk ul { list-style: none; line-height: 1.6; }
+  #book .blk + .blk { margin-top: 1.1em; }
+  #book .stbtn { display: inline-block; font: 600 1.05em/1 "Schibsted Grotesk", sans-serif; padding: .85em 1.3em; border-radius: 999px; background: var(--red); color: #fff; text-decoration: none;
+    box-shadow: 0 0 0 .22em var(--sticker), 0 .35em .6em rgba(0,0,0,.28); cursor: pointer; transition: transform .2s; }
+  #book .stbtn.light { background: var(--sticker); color: var(--ink); box-shadow: 0 0 0 1.5px rgba(0,0,0,.12), 0 .35em .6em rgba(0,0,0,.2); }
+  #book .stbtn:hover { transform: rotate(-2deg) scale(1.04); }
+  #book .stbtn:focus-visible, #booknav button:focus-visible, #bookwrap .x:focus-visible { outline: 2px solid var(--pen); outline-offset: 4px; }
+  #book .pnum { font: 400 1.05em "Nothing You Could Do", cursive; color: #9a978f; }
+  @media (prefers-reduced-motion: reduce) { #book, #book .leaf, #book .bg { transition-duration: .01s !important; } }
+  #book .pg.img { padding: 0; background: #f4f1ea; }
+  #book .pg.img > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; user-select: none; }
+  #book .pg.r.img { box-shadow: inset 18px 0 24px -16px rgba(0,0,0,.35); }
+  #book .pg.l.img { box-shadow: inset -18px 0 24px -16px rgba(0,0,0,.35); }
+  #book .hot { position: absolute; z-index: 2; outline: none; }
+  #book .hot::after { content: ""; position: absolute; inset: 0; background: #c2182f; opacity: 0; transition: opacity .2s; pointer-events: none;
+    -webkit-mask: var(--m) center / 100% 100% no-repeat; mask: var(--m) center / 100% 100% no-repeat; }
+  #book .hot[data-act="talk"] { --m: url("assets/cuaderno/hot_t.webp"); } #book .hot[data-act="cv"] { --m: url("assets/cuaderno/hot_c.webp"); }
+  #book .hot:hover::after, #book .hot:focus-visible::after { opacity: .34; }
+  #book .hot:active::after { opacity: .5; }
+  @media (max-width: 760px) { #book .pg.img { min-height: 0; } }
+  /* ---------- espejo: cómo lo hice (el otro lado) ---------- */
+  #mwback { position: fixed; inset: 0; z-index: 85; display: none; background: rgba(15,15,15,0); transition: background .45s; }
+  #mwback.show { background: rgba(15,15,15,.6); backdrop-filter: blur(3px); }
+  #mwfly { position: fixed; left: 0; top: 0; z-index: 86; display: none; transform-origin: 0 0; pointer-events: none; transition: transform .65s cubic-bezier(.2,.8,.2,1); }
+  #mwfly img { width: 100%; display: block; }
+  #mwfly .fg { position: absolute; left: 12%; top: 11.8%; width: 76%; height: 76.4%; background: rgba(236,240,245,0); transition: background .35s; }
+  #mwfly.fogged .fg { background: rgba(236,240,245,.82); }
+  #mw { --paper: #f4efe6; --ink: #ece6db; --soft: #a59e94; --pink: #f07f7a; --deep: #121214;
+    position: fixed; inset: 0; z-index: 86; display: none; overflow-y: auto; overscroll-behavior: contain; color: var(--ink);
+    background: var(--deep); font: 400 17px/1.6 Inter, sans-serif;
+    clip-path: inset(var(--t, 0) var(--r, 0) var(--b, 0) var(--l, 0) round 6px); transition: clip-path .75s cubic-bezier(.7,0,.2,1); }
+  #mw .bgimg { position: fixed; inset: 0; background: url("assets/espejo/mk/techo.webp") center / cover; filter: brightness(1.45) contrast(1.05); pointer-events: none; }
+  #mw .bgimg::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(14,14,16,.7) 0%, rgba(14,14,16,.45) 50%, rgba(14,14,16,.2) 100%), linear-gradient(180deg, rgba(14,14,16,0), rgba(14,14,16,.35)); }
+  #mw .fog { position: fixed; inset: 0; background: rgba(235,240,245,.7); backdrop-filter: blur(14px); opacity: 0; pointer-events: none; transition: opacity .5s; z-index: 3; }
+  #mw.fogging .fog { opacity: 1; transition: none; }
+  #mwcur { position: fixed; left: 0; top: 0; width: 20px; z-index: 5; pointer-events: none; opacity: 0; transition: opacity .2s; filter: blur(.4px) drop-shadow(0 2px 3px rgba(0,0,0,.3)); }
+  #mw.hovering #mwcur { opacity: .5; }
+  #mw .x { position: fixed; top: 80px; right: 22px; z-index: 4; font: 600 14px Inter; color: var(--ink); background: rgba(18,18,20,.6);
+    border: 1px solid rgba(236,230,219,.35); border-radius: 999px; padding: 9px 16px; cursor: pointer; backdrop-filter: blur(6px); }
+  #mw .in[data-l]:not(.cur) { display: none; }
+  #mw .in { text-shadow: 0 1px 12px rgba(0,0,0,.35); }
+  #mw .in { position: relative; z-index: 1; max-width: 1040px; margin: 0 auto; padding: 120px 40px 120px; }
+  #mw h2 { font: 400 clamp(64px, 11vw, 168px)/.86 Anton, sans-serif; letter-spacing: -.01em; color: var(--ink); max-width: 9.5em; }
+  /* al entrar, todo el contenido está del revés (es el reflejo) y se da la vuelta */
+  #mw .in { transform: perspective(1800px) rotateY(180deg); transform-origin: 50% 300px; transition: transform 1.1s cubic-bezier(.65,0,.25,1) .2s; }
+  #mw.open .in { transform: perspective(1800px) rotateY(0deg); }
+  #mw .lead { font-size: 21px; line-height: 1.5; max-width: 34em; margin-top: 34px; color: var(--ink); }
+  #mw .leadrow { display: flex; align-items: flex-start; justify-content: space-between; gap: 30px; }
+  #mw .trust { flex: none; width: 140px; margin: 10px 40px 0 0; transform: rotate(9deg); filter: drop-shadow(0 10px 16px rgba(0,0,0,.45)); }
+  #mw section { margin-top: 150px; }
+  #mw h3 { font: 400 clamp(40px, 5.4vw, 72px)/.95 Anton, sans-serif; color: var(--ink); margin-bottom: 30px; max-width: 12em; }
+  #mw h3 em { font-style: normal; color: var(--pink); }
+  #mw p + p { margin-top: 1em; }
+  #mw .cols { display: grid; grid-template-columns: 1.1fr .9fr; gap: 60px; align-items: start; }
+  #mw .body { max-width: 36em; color: #d7d0c5; }
+  #mw .hand { font: 600 19px/1.35 "Playpen Sans", cursive; color: var(--pink); }
+  /* lo descartado: notas de papel tachadas */
+  #mw .drops { display: grid; grid-template-columns: repeat(3, 1fr); gap: 26px; margin-top: 40px; }
+  #mw .drop { background: var(--paper); color: #26231f; padding: 26px 24px 30px; box-shadow: 0 18px 30px rgba(0,0,0,.35); position: relative; }
+  #mw .drop:nth-child(1) { transform: rotate(-2deg); } #mw .drop:nth-child(2) { transform: rotate(1.5deg) translateY(18px); } #mw .drop:nth-child(3) { transform: rotate(-1deg); }
+  #mw .drop b { display: block; font: 400 30px/1 Anton, sans-serif; text-decoration: line-through; text-decoration-color: var(--pink); text-decoration-thickness: 5px; margin-bottom: 16px; }
+  #mw .drop span { font: 500 16px/1.4 "Playpen Sans", cursive; color: #3b3632; }
+  #mw .drop::before { content: ""; position: absolute; top: -12px; left: 40%; width: 84px; height: 24px; background: rgba(240,127,122,.75); transform: rotate(-4deg); }
+  /* proceso */
+  #mw ol.steps { list-style: none; counter-reset: s; margin-top: 10px; }
+  #mw ol.steps > li { counter-increment: s; display: grid; grid-template-columns: 110px 1fr; gap: 26px; padding: 44px 0; border-top: 1px solid rgba(236,230,219,.14); }
+  #mw ol.steps > li::before { content: counter(s, decimal-leading-zero); font: 400 64px/.9 Anton, sans-serif; color: var(--pink); }
+  #mw .tool { display: block; font: 400 34px/1 Anton, sans-serif; color: var(--ink); margin-bottom: 12px; }
+  #mw .row { display: flex; gap: 18px; margin-top: 26px; flex-wrap: wrap; align-items: flex-end; }
+  #mw .row img { display: block; box-shadow: 0 12px 24px rgba(0,0,0,.4); }
+  #mw .row figure { flex: none; }
+  #mw .ba { position: relative; width: min(360px, 78vw); aspect-ratio: 1 / 1.414; overflow: hidden; touch-action: none; cursor: ew-resize; box-shadow: 0 16px 30px rgba(0,0,0,.45); user-select: none; }
+  #mw .ba img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; box-shadow: none; pointer-events: none; }
+  #mw .ba .top { clip-path: inset(0 calc(100% - var(--p, 50%)) 0 0); }
+  #mw .ba .handle { position: absolute; top: 0; bottom: 0; left: var(--p, 50%); width: 2px; background: var(--pink); transform: translateX(-1px); }
+  #mw .ba .handle::after { content: ""; position: absolute; top: 50%; left: 50%; width: 38px; height: 38px; border-radius: 50%; background: var(--pink); transform: translate(-50%, -50%);
+    box-shadow: 0 0 0 4px rgba(18,18,20,.35); }
+  #mw .ba:focus-visible { outline: 2px solid var(--pink); outline-offset: 4px; }
+  #mw .ba .lbl { position: absolute; bottom: 10px; font: 600 15px/1.6 "Playpen Sans", cursive; color: #26231f; background: rgba(244,239,230,.9); padding: 0 10px; border-radius: 3px; }
+  #mw figure { margin: 0; }
+  #mw figcaption { font: 500 15px/1.3 "Playpen Sans", cursive; color: var(--soft); margin-top: 10px; }
+  /* decisiones de UX */
+  #mw .ux { display: grid; grid-template-columns: 1fr 1fr; gap: 48px 60px; margin-top: 20px; }
+  #mw .ux h4 { font: 400 28px/1.05 Anton, sans-serif; color: var(--ink); margin-bottom: 10px; }
+  #mw .ux h4 i { font-style: normal; color: var(--pink); }
+  #mw .ux p { color: #cfc8bd; max-width: 26em; }
+  #mw .end { text-align: left; }
+  #mw .end h3 { max-width: 14em; }
+  #mw .btns { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 10px; }
+  #mw .btns button { font: 600 16px Inter; padding: 15px 26px; border-radius: 999px; cursor: pointer; border: 1.5px solid var(--pink); }
+  #mw .btns .main { background: var(--pink); color: #1a1715; }
+  #mw .btns .ghost { background: none; color: var(--ink); border-color: rgba(236,230,219,.4); }
+  #mw button:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+  @media (max-width: 760px) {
+    #mw { font-size: 16px; } #mw .in { padding: 90px 22px 90px; } #mw .trust { width: 84px; margin: 20px 0 0; }
+    #mw .cols, #mw .drops, #mw .ux { grid-template-columns: 1fr; } #mw .drop:nth-child(2) { transform: rotate(1.5deg); }
+    #mw ol.steps > li { grid-template-columns: 1fr; gap: 8px; } #mw section { margin-top: 100px; }
+  }
+  @media (prefers-reduced-motion: reduce) { #mw, #mw .in { transition: none !important; } }
+  #booknav { position: absolute; left: 50%; bottom: 18px; transform: translateX(-50%); display: flex; gap: 10px; opacity: 0; transition: opacity .3s; }
+  #bookwrap.open #booknav { opacity: 1; }
+  #booknav button, #bookwrap .x { font: 600 14px Inter; color: #fff; background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.4); border-radius: 999px; padding: 9px 16px; cursor: pointer; }
+  #booknav button:disabled { opacity: .35; cursor: default; }
+  #booknav span { color: #fff; font: 600 14px Inter; align-self: center; min-width: 44px; text-align: center; }
+  #bookwrap .x { position: absolute; top: 80px; right: 22px; z-index: 3; }
+  #book .leaf, #book .pg.r.base { cursor: pointer; }
+  #book .leaf.turned .front { pointer-events: none; }
+  @media (max-width: 760px) {
+    #bookwrap { overflow-y: auto; perspective: none; }
+    #book { --pw: 92vw; position: static; margin: 128px auto 30px; width: 92vw; height: auto; transform: none !important; }
+    #book .pg, #book .pg.l, #book .pg.r { position: relative; width: 100%; height: auto; aspect-ratio: 1 / 1.414; margin-bottom: 14px; left: auto; right: auto; border-radius: 4px; box-shadow: 0 10px 24px rgba(0,0,0,.3); }
+    #book .leaf, #booknav, #book .bg { display: none; }
+  }
+
+  #lightbox { position: fixed; inset: 0; z-index: 100; background: rgba(20,20,20,.88); display: none; align-items: center; justify-content: center; padding: 4vw; cursor: zoom-out; }
+  #lightbox.show { display: flex; }
+  #lightbox img { max-width: 100%; max-height: 100%; border-radius: 10px; user-select: none; -webkit-user-drag: none; }
+  #lightbox.multi img { cursor: pointer; }
+  #lightbox .nav, #lightbox .lbx { position: absolute; display: none; width: 46px; height: 46px; border-radius: 50%; border: 1px solid rgba(255,255,255,.4); background: rgba(20,20,20,.55); color: #fff; font: 400 26px/1 Inter, sans-serif; cursor: pointer; align-items: center; justify-content: center; }
+  #lightbox .nav:hover, #lightbox .lbx:hover { background: #fff; color: #111; }
+  #lightbox .prev { left: 18px; top: 50%; transform: translateY(-50%); } #lightbox .next { right: 18px; top: 50%; transform: translateY(-50%); }
+  #lightbox .lbx { display: flex; top: 16px; right: 18px; font-size: 18px; }
+  #lightbox.multi .nav { display: flex; }
+  #lightbox .count { position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%); color: #fff; font: 600 13px Inter, sans-serif; opacity: .8; display: none; }
+  #lightbox.multi .count { display: block; }
+  @media (max-width: 760px) { #lightbox { padding: 12px; } #lightbox .nav { display: none !important; } }
+  #toast { position: fixed; left: 50%; bottom: 28px; transform: translate(-50%, 20px); z-index: 95; background: #1d1c1a; color: #fff; padding: 10px 18px;
+    border-radius: 999px; font-size: 14px; opacity: 0; transition: .3s; pointer-events: none; }
+  #toast.show { opacity: 1; transform: translate(-50%, 0); }
+  @media (max-width: 900px) {
+    .cs { grid-template-columns: minmax(0, 1fr); padding: 74px 22px 80px; gap: 10px; }
+    .cs .hero { grid-template-columns: minmax(0, 1fr) !important; } .cs .hscroll img { height: 240px; }
+    .cs aside { position: static; height: auto; } .cs aside img { width: 62vw; }
+    .cs h1 { font-size: 76px; } .cs .hero { grid-template-columns: 1fr; } .cs .hero img { max-width: 260px; }
+    .cs .phones, .cs .pages { grid-template-columns: repeat(2, 1fr); } .cs .two { grid-template-columns: 1fr; }
+    .cs section { margin-top: 70px; } .cs h2 { font-size: 34px; }
+  }
+  /* móvil: barra fija "Volver a la mesa" bajo la cabecera en todas las pantallas fuera de la mesa */
+  #mback { display: none; }
+  @media (max-width: 760px) {
+    body.ovl #mback { display: flex; align-items: center; position: fixed; top: 64px; left: 0; right: 0; height: 44px; z-index: 92; padding: 0 20px;
+      background: rgba(25,24,22,.92); backdrop-filter: blur(8px); color: #fff; border: 0; border-top: 1px solid rgba(255,255,255,.12); font: 600 14px Inter, sans-serif; cursor: pointer; }
+    #case .back, #bookwrap .x, #mw .x, #camzoom .x, #gallery header .close { display: none !important; }
+    .cs { padding-top: 128px !important; }
+    #mw .in { padding-top: 140px !important; }
+    #gallery { top: 108px; }
+    #gallery header { padding: 14px 14px 18px; gap: 8px; flex-wrap: wrap; }
+    #gallery header .t { font-size: 22px; flex: 1 0 100%; margin: 0 0 4px; }
+    #gallery header button { padding: 7px 14px; }
+    #camzoom .big { width: 96vw; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="name">CELIA BARBECHO</div>
+  <nav>
+    <button id="btn-lang" aria-label="Idioma" data-aria="lng">EN</button>
+    <button id="btn-sort" aria-pressed="false" data-i18n="sort">Ordenar</button>
+    <button id="btn-contact" data-i18n="contact">Contacto</button>
+    <button class="burger" id="btn-burger" aria-label="Menú" data-aria="menu">☰</button>
+  </nav>
+</header>
+<button id="mback" type="button" data-i18n="back">← Volver a la mesa</button>
+<div id="menu"><button data-i18n="contact" id="m-contact">Contacto</button><button data-i18n="about" id="m-about" hidden>Trayectoria</button><button data-i18n="howto">Cómo lo hice</button><button data-i18n="cam2" id="m-cam" hidden>Visuales con IA</button></div>
+
+<div id="stage"></div>
+<div id="list"></div>
+
+<div id="scrim"></div>
+<section id="contact" aria-hidden="true">
+  <button class="close" aria-label="Cerrar" data-aria="closex">✕</button>
+  <h2 data-i18n="talk">¿HABLAMOS?</h2>
+  <p>lilydesigner0@gmail.com<br>
+  <a href="https://www.linkedin.com/" target="_blank" rel="noopener">LinkedIn — Celia Barbecho Pérez</a><br>
+  <a href="https://www.instagram.com/ux_yoyo/" target="_blank" rel="noopener">Instagram — @ux_yoyo</a></p>
+</section>
+
+<div id="case" aria-hidden="true">
+  <button class="back js-back" id="case-back" data-i18n="back">← Volver a la mesa</button>
+  <div class="cs">
+    <aside><img id="case-poster" src="assets/try/00.webp" alt="Cartel de TRY*"></aside>
+    <article id="case-article"></article>
+  </div>
+</div>
+<template id="tpl-try-en">
+      <div class="hero" style="grid-template-columns:1fr">
+        <div>
+          <div class="kicker">Mobile app · Master's in graphic and UX/UI design · 2026</div>
+          <h1>TRY<b>*</b></h1>
+          <p class="lead">An app that lets people who don't know what to study talk to real professionals and try out a job before choosing it.</p>
+        </div>
+      </div>
+      <dl>
+        <dt>Role</dt><dd>UX/UI Designer, solo</dd>
+        <dt>Duration</dt><dd>3 weeks</dd>
+        <dt>Tools</dt><dd>Figma, Maze</dd>
+        <dt>Credits</dt><dd>Illustrations: Milano (Streamline) · Copy supported by ChatGPT and Gemini</dd>
+      </dl>
+
+      <section class="result">
+        <h2><small>THE RESULT</small>Better than telling you.</h2>
+        <p>It's the Figma prototype exactly as it was tested in Maze: onboarding, home, chats and profiles.</p>
+        <div class="device phone"><img class="cover" src="assets/try/cs/pant_bienvenida.webp" alt="">
+          <a class="play js-proto" href="https://www.figma.com/proto/RswytnVWUudseLW1YYXHie/PROYECTO-FINAL-ENTREGABLE?page-id=1%3A3048&amp;node-id=161-1602&amp;p=f&amp;viewport=498%2C31%2C0.08&amp;t=F18dyf9TWpjiws25-1&amp;scaling=scale-down&amp;content-scaling=fixed&amp;starting-point-node-id=161%3A1602&amp;show-proto-sidebar=1"
+             data-embed="https://embed.figma.com/proto/RswytnVWUudseLW1YYXHie/PROYECTO-FINAL-ENTREGABLE?page-id=1%3A3048&amp;node-id=161-1602&amp;starting-point-node-id=161%3A1602&amp;scaling=scale-down&amp;content-scaling=fixed&amp;hide-ui=1&amp;embed-host=share" target="_blank" rel="noopener">▶ Try the prototype</a></div>
+      </section>
+
+      <section>
+        <h2><small>01 · THE PROBLEM</small>At 18 you're expected to know what you'll be.</h2>
+        <p>And it's asked as if it were obvious. The information exists (degrees, career paths, rankings), but nobody tells you what a job is really like or whether you'd fit in.</p>
+        <div class="stats">
+          <div><b>4 in 5</b><span>high school students don't know what to study</span></div>
+          <div><b>55 %</b><span>choose their studies without considering their interests</span></div>
+        </div>
+        <div class="src">Source: Educaweb.</div>
+        <div class="bubbles">
+          <div class="bubble">I'm 20 and idk what to do with my life</div>
+          <div class="bubble">I turn 21 this year and I feel late for everything</div>
+          <div class="bubble">I'm in my 2nd semester of Architecture and I feel I got it wrong</div>
+          <div class="bubble">I don't have the guts to quit because I feel people will judge me</div>
+        </div>
+        <div class="src">Real TikTok comments, collected during the netnography.</div>
+      </section>
+
+      <section>
+        <h2><small>02 · WHAT I FOUND</small>They're not lost for lack of motivation.</h2>
+        <p>I ran 54 surveys, interviews, netnography, benchmarking and a SWOT. This is what came up most:</p>
+        <ul class="ins">
+          <li>Fear of getting it wrong blocks them more than lack of interest.</li>
+          <li>They want practical guidance, not theory: to see a job from the inside before committing four years.</li>
+          <li>They go through it alone, and many are embarrassed to admit they're lost.</li>
+        </ul>
+        <blockquote class="small">“Just social media and my circle, it's not like there was anywhere to go to sort out these doubts.”<cite>Laura, 21, on how she chose her degree</cite></blockquote>
+        <blockquote>What they're looking for most isn't a right answer, but a space where they can get it wrong without feeling like a failure.</blockquote>
+        <div class="stats">
+          <div><b>54</b><span>people surveyed</span></div>
+          <div><b>87 %</b><span>aged 15 to 30</span></div>
+          <div><b>48 %</b><span>studying a degree</span></div>
+        </div>
+      </section>
+
+      <section>
+        <h2><small>03 · THE KEY DECISION</small>Three verbs. The last one is the one nobody offers.</h2>
+        <div class="verbs"><span>Explore</span><span>Ask</span><span>Try</span></div>
+        <p>Explore professional profiles with their real career path, not a cold CV. Ask in 1:1 mentoring sessions. And try: with “Days with me” you spend a day with a professional at work before choosing.</p>
+        <p>The tone matches: calm and reassuring, no aspirational language. In TRY* there are no right paths, only things to try.</p>
+        <figure><img class="zoom" src="assets/try/cs/sitemap.webp" alt="TRY* site map"><figcaption>Site map: Home, Community, Chat and Profile. Click to enlarge.</figcaption></figure>
+      </section>
+
+      <section>
+        <h2><small>04 · THE OTHER SIDE</small>Without professionals, there's nothing to explore.</h2>
+        <p>TRY* is a marketplace, so I also interviewed the people who'd have to open the doors of their work. Jose runs a trucking company:</p>
+        <blockquote class="small">“Well, I think they'd get a bit bored, because I spend hours driving with the radio on and that's it. But hey, anyone who wants to come, can come.”<cite>Jose, transport company</cite></blockquote>
+        <p>He was interested, on one condition: that it was worth his while. That's where the model comes from. Young people pay a subscription and professionals earn a commission for each mentoring session or experience. And since many users are minors, every profile is verified and parents sign the authorisation.</p>
+      </section>
+
+      <section>
+        <h2><small>05 · FROM SKETCH TO SCREEN</small>Structure first, colour later.</h2>
+        <div class="two">
+          <figure><img class="zoom" src="assets/try/cs/wireframes.webp" alt="Low-fidelity wireframes"><figcaption>Low-fidelity wireframes.</figcaption></figure>
+          <figure><img class="zoom" src="assets/try/cs/marca.webp" alt="TRY* brand: logo, palette and typography"><figcaption>The brand: the orange asterisk as the only accent and a typeface with alternate characters.</figcaption></figure>
+        </div>
+        <div class="phones">
+          <figure><img src="assets/try/cs/pant_bienvenida.webp" alt="Welcome screen"><figcaption>Welcome</figcaption></figure>
+          <figure><img src="assets/try/cs/pant_inicio.webp" alt="Home screen"><figcaption>Home</figcaption></figure>
+          <figure><img src="assets/try/cs/pant_chats.webp" alt="Chats screen"><figcaption>Chats</figcaption></figure>
+          <figure><img src="assets/try/cs/pant_perfil.webp" alt="A professional's profile"><figcaption>A professional's profile</figcaption></figure>
+        </div>
+        <blockquote class="small">“I love the visual style, especially the illustrations and the change of typeface in certain characters. It has a lot of Sevillian flair.”<cite>Maze test participant</cite></blockquote>
+      </section>
+
+      <section>
+        <h2><small>06 · I TESTED IT</small>Easy to use. The why, not so much.</h2>
+        <p>Maze test: complete the onboarding, find a professional's profile and open a chat.</p>
+        <div class="stats">
+          <div><b>76 %</b><span>understood the onboarding without explanation</span></div>
+          <div><b>71 %</b><span>rated ease of use 5/5</span></div>
+          <div><b>0</b><span>critical errors</span></div>
+        </div>
+        <div class="heat">
+          <figure><img class="zoom" src="assets/try/cs/heat_explora.webp" alt="Onboarding heatmap"><figcaption>Onboarding: explore, ask, try.</figcaption></figure>
+          <figure><img class="zoom" src="assets/try/cs/heat_conocer.webp" alt="Profile choice heatmap"><figcaption>Professional or apprentice?</figcaption></figure>
+          <figure><img class="zoom" src="assets/try/cs/heat_comunidad.webp" alt="Community heatmap"><figcaption>Community: “Days with me” stories.</figcaption></figure>
+        </div>
+        <figure><img class="zoom" src="assets/try/cs/flujo.webp" alt="Users' path to the chat"><figcaption>Users' path to the chat: almost everyone goes straight there.</figcaption></figure>
+        <p style="margin-top:26px">But the comments said something the numbers didn't:</p>
+        <blockquote class="small">“It's really easy to use, but I don't know what the app is for.”<cite>Maze test participant</cite></blockquote>
+        <p>The test left three improvements: strengthen the opening message of the onboarding, more direct shortcuts for people in a hurry and a transition into home from the asterisk.</p>
+      </section>
+
+      <section>
+        <h2><small>07 · WHAT I'D DO NOW</small>Make the “what for” clear in a second.</h2>
+        <p>Before how it's used, make clear what it's for. And I'd test “Days with me” with real professionals, outside Figma.</p>
+        <p class="hook">Jose thinks nobody would want to spend a day in his truck. I think more than one person would, and I have a few ideas on how to make it happen. Shall we talk?</p>
+      </section>
+
+
+      <div class="end">
+        <a class="btn" href="https://www.figma.com/proto/RswytnVWUudseLW1YYXHie/PROYECTO-FINAL-ENTREGABLE?page-id=1%3A3048&amp;node-id=161-1602&amp;p=f&amp;viewport=498%2C31%2C0.08&amp;t=F18dyf9TWpjiws25-1&amp;scaling=scale-down&amp;content-scaling=fixed&amp;starting-point-node-id=161%3A1602&amp;show-proto-sidebar=1" target="_blank" rel="noopener">View prototype ↗</a>
+        <a class="btn ghost" href="https://www.figma.com/deck/Odm0r0PRIAUOUhm38otL4I" target="_blank" rel="noopener">View presentation ↗</a>
+        <button class="js-next" data-next="malaje">Next poster: Malaje →</button>
+        <button class="js-back ghost">← Back to the desk</button>
+      </div>
+</template>
+<template id="tpl-malaje-en">
+      <div class="hero" style="grid-template-columns:1fr">
+        <div>
+          <div class="kicker">eCommerce · Design-in-public challenge</div>
+          <h1>Malaje<b>.</b></h1>
+          <p class="lead">A jewellery brand with attitude, designed from scratch in five days: brand, design system and online store.</p>
+        </div>
+      </div>
+      <dl>
+        <dt>Role</dt><dd>UI Designer, solo</dd>
+        <dt>Duration</dt><dd>5 days</dd>
+        <dt>Tools</dt><dd>Figma, Photoshop, Claude Code (connected to Figma via MCP)</dd>
+      </dl>
+
+      <section class="result">
+        <h2><small>THE RESULT</small>Hover over the jewellery.</h2>
+        <p>The clickable prototype, with the four categories and the photo swap when you hover over each product.</p>
+        <div class="device browser"><img class="cover" src="assets/malaje/cs/home.webp" alt="">
+          <a class="play js-proto" href="https://www.figma.com/proto/ynW3fhYtqiX1GEz48b5xeW/Malaje?node-id=8-148&amp;p=f&amp;viewport=207%2C86%2C0.12&amp;t=kqEjzfX3skeQaXoO-1&amp;scaling=min-zoom&amp;content-scaling=fixed&amp;starting-point-node-id=8%3A148&amp;page-id=8%3A147"
+             data-embed="https://embed.figma.com/proto/ynW3fhYtqiX1GEz48b5xeW/Malaje?node-id=8-148&amp;starting-point-node-id=8%3A148&amp;page-id=8%3A147&amp;scaling=min-zoom&amp;content-scaling=fixed&amp;hide-ui=1&amp;embed-host=share" target="_blank" rel="noopener">▶ Try the prototype</a></div>
+      </section>
+      <figure><img class="zoom" src="assets/malaje/cs/portada.webp" alt="Malaje store home page"><figcaption>The cover: the jewellery says the name before any text does.</figcaption></figure>
+
+      <section>
+        <h2><small>01 · THE BRAND</small>Neither untouchable luxury nor fast fashion.</h2>
+        <p>I wanted a jewellery brand with attitude but no fuss: statement pieces to wear day and night, in four lines (bracelets, earrings, rings and necklaces).</p>
+        <p>And I knew the identity had to speak before anyone read a word. That's why the name is engraved on the jewellery itself, in the model's mouth.</p>
+      </section>
+
+      <section>
+        <h2><small>02 · FROM REFERENCE TO DECISION</small>Every reference, with its why.</h2>
+        <p>The moodboard wasn't just inspiration. Next to each reference I noted what I was taking from it: rounded corners and a clean bar with the logo in the centre, a cover with the name built into the image and, above all, what happens when you hover over a product.</p>
+        <figure><img class="zoom" src="assets/malaje/cs/moodboard.webp" alt="Malaje moodboard with notes"><figcaption>Moodboard with my notes. Click to enlarge.</figcaption></figure>
+        <blockquote>You can't try anything on in an online jewellery store. So the product card lets you see it worn.</blockquote>
+        <p>Each card has two states: the piece alone on a white background, clean and distraction-free, and the piece worn by a person, so you can picture it on you. It was the first component I designed and the rest of the system grew from it.</p>
+      </section>
+
+      <section>
+        <h2><small>03 · THE SYSTEM</small>Blue for trust, beige to soften.</h2>
+        <p>Before touching a component, I documented the foundations. Blue gives solidity and trust; beige adds warmth and takes the edge off. For headings, Cormorant, elegant without being stiff, and Montserrat so the text reads effortlessly.</p>
+        <figure><img class="zoom" src="assets/malaje/cs/foundations.webp" alt="Malaje colours and typography" style="max-width:520px"><figcaption>Foundations: colours and type scale.</figcaption></figure>
+      </section>
+
+      <section>
+        <h2><small>04 · THE PAGES</small>Same structure, different content.</h2>
+        <p>A home page and four categories with the same structure: access to all of them at the top, the product grid and the footer. On mobile, the same logic: hamburger menu, two columns and every category one tap from the home page.</p>
+        <figure><img class="zoom" src="assets/malaje/cs/paginas.webp" alt="The home page and the four categories"><figcaption>Home, bracelets, earrings, rings and necklaces. Click to enlarge.</figcaption></figure>
+        <div class="pages">
+          <figure><img class="zoom" src="assets/malaje/cs/home.webp" alt="Home"><figcaption>Home</figcaption></figure>
+          <figure><img class="zoom" src="assets/malaje/cs/pulseras.webp" alt="Bracelets"><figcaption>Bracelets</figcaption></figure>
+          <figure><img class="zoom" src="assets/malaje/cs/pendientes.webp" alt="Earrings"><figcaption>Earrings</figcaption></figure>
+          <figure><img class="zoom" src="assets/malaje/cs/movil.webp" alt="Mobile"><figcaption>Mobile</figcaption></figure>
+        </div>
+      </section>
+
+      <section>
+        <h2><small>05 · HOW I MADE IT</small>Five days, in public, with AI for the mechanical bits.</h2>
+        <p>I did it as a public challenge and shared it on social media as I went. I connected Claude Code to Figma via MCP for the most mechanical part: renaming layers, tidying the UI Kit and structuring sections. I spent the time I saved on what matters: deciding.</p>
+        <p><a class="inline" href="https://www.instagram.com/reel/DW6qW0yjVh5/" target="_blank" rel="noopener">See the process on Instagram ↗</a></p>
+      </section>
+
+      <section>
+        <h2><small>06 · WHAT I'D DO NOW</small>Put it in front of the people who buy.</h2>
+        <p>Malaje hasn't been tested with users yet. The first thing I'd test is my main bet: whether seeing the piece worn sells more than seeing it alone. Then the full purchase flow, from the card to checkout.</p>
+        <p class="hook">My bet is yes. And I know exactly how I'd measure it, if you fancy talking it through.</p>
+      </section>
+
+
+      <div class="end">
+        <a class="btn" href="https://www.figma.com/proto/ynW3fhYtqiX1GEz48b5xeW/Malaje?node-id=8-148&amp;p=f&amp;viewport=207%2C86%2C0.12&amp;t=kqEjzfX3skeQaXoO-1&amp;scaling=min-zoom&amp;content-scaling=fixed&amp;starting-point-node-id=8%3A148&amp;page-id=8%3A147" target="_blank" rel="noopener">View prototype ↗</a>
+        <button class="js-back ghost">← Back to the desk</button>
+        <button class="js-next" data-next="wineup">Next poster: WineUp →</button>
+      </div>
+</template>
+<template id="tpl-wineup-en">
+      <div class="hero" style="grid-template-columns:1fr">
+        <div>
+          <div class="kicker">Landing page · Live · 2026</div>
+          <h1>WineUp<b>.</b></h1>
+          <p class="lead">The landing page of a wine social network for people who know nothing about wine. And for those who do.</p>
+        </div>
+      </div>
+      <dl>
+        <dt>Role</dt><dd>Concept, design and handoff, solo (the development isn't mine)</dd>
+        <dt>Tools</dt><dd>Figma, with annotations in Dev Mode</dd>
+        <dt>Scope</dt><dd>4 pages, 5 screen sizes, in Spanish and English</dd>
+        <dt>Live</dt><dd><a class="inline" href="https://wineup.world" target="_blank" rel="noopener">wineup.world ↗</a></dd>
+      </dl>
+
+      <section class="result">
+        <h2><small>THE RESULT</small>It's live.</h2>
+        <p>Open it on desktop and drag the phone over a bottle.</p>
+        <div class="device browser"><img class="cover" src="assets/wineup/cs/hero.webp" alt="">
+          <a class="play" href="https://wineup.world" target="_blank" rel="noopener">Open wineup.world ↗</a></div>
+      </section>
+
+      <section>
+        <h2><small>01 · THE CHALLENGE</small>Four audiences, and none of them want an exam.</h2>
+        <p>WineUp speaks at once to people who drink wine (WineLovers), people who know wine (WineExperts), wineries (WineMakers) and bars and restaurants (WineVenues). The landing had to win over all four without scaring anyone who can't tell a tempranillo from a garnacha.</p>
+        <blockquote>Wine is not an exam.<cite>The underlying idea, in one line from my Figma file</cite></blockquote>
+      </section>
+
+      <section>
+        <h2><small>02 · THE KEY DECISION</small>Show the app instead of explaining it.</h2>
+        <p>There's no how-it-works video on the home page: there's a phone you can drag with the mouse. When you move it over a wine, it scans it right in front of you, with the same screens as the app: idle, scan, scanning and result. On mobile and tablet the phone doesn't appear.</p>
+        <div class="hscroll"><img class="zoom" src="assets/wineup/cs/home.webp" alt="WineUp landing home page"></div>
+        <figcaption>The full home page. Swipe to scroll through it or click to enlarge.</figcaption>
+      </section>
+
+      <section>
+        <h2><small>03 · A HANDMADE BRAND</small>Doodles, polaroids and lines that stick.</h2>
+        <p>No wine glasses on white tablecloths. The landing looks like a corkboard full of stuff: polaroids of people having a good time, stickers you can drag around (one has a QR code that actually scans), a retro TV with video and handwritten text. And a tone that doesn't take wine too seriously:</p>
+        <div class="stickers">
+          <span>Wine is not an exam</span><span>So… you joining?</span><span>Click here, thank us later</span><span>Slide into our inbox</span>
+          <span>Scan this or miss out</span><span>Have a glass while we review it</span><span>Stop staring at the screen, the wine is getting warm</span><span>Zero wine, zero content</span>
+        </div>
+        <figcaption>Microcopy from the landing, the 404 page and account verification.</figcaption>
+      </section>
+
+      <section>
+        <h2><small>04 · A PAGE PER PROFILE</small>Same structure, three colours.</h2>
+        <p>Each professional profile has its own page: what you can do today, what's coming next (covered with “CONFIDENTIAL” tape, which you can also drag) and a path of numbered post-its to join. Wineries end with a form to claim their profile.</p>
+        <div class="hscroll"><img class="zoom" src="assets/wineup/cs/expert.webp" alt="WineExpert page"></div>
+        <div class="hscroll"><img class="zoom" src="assets/wineup/cs/maker.webp" alt="WineMaker page with the form"></div>
+        <div class="hscroll"><img class="zoom" src="assets/wineup/cs/venue.webp" alt="WineVenue page"></div>
+        <figcaption>WineExpert, WineMaker (with the form) and WineVenue.</figcaption>
+      </section>
+
+      <section>
+        <h2><small>05 · BUILT TO BE BUILT</small>I didn't code it, so I wrote everything down.</h2>
+        <p>Every interactive piece has its note for development in Dev Mode: what it does on desktop, what changes on tablet and mobile, and how it works with a keyboard. Here are a few, in their original wording:</p>
+        <div class="hscroll anno"><div class="annobox"><img src="assets/wineup/cs/home.webp" alt="Home page with annotations">
+          <i style="left:28%;top:52%">1</i><i style="left:94%;top:20%">2</i><i style="left:72%;top:42%">3</i><i style="left:47%;top:22%">4</i><i style="left:12%;top:85%">5</i><i style="left:8%;top:60%">6</i>
+        </div></div>
+        <ol class="notes">
+          <li><b>Phone prototype</b>Desktop only (no phone prototype on mobile and tablet). The user drags the phone with the mouse or by touch. When a wine sits behind it, the phone runs the app prototype screens (Default, Scan, Scanning, Final).</li>
+          <li><b>QR sticker</b>Draggable anywhere on the screen. The QR can be scanned, and a click or tap without dragging opens the store.</li>
+          <li><b>Helloo bubble</b>Desktop: colour changes on hover, click opens mailto: to WineUp support. Mobile and tablet: tap opens the mailto:.</li>
+          <li><b>Handwritten texts</b>Exported as SVG/image, never a web font.</li>
+          <li><b>Pros links</b>“Are you one of our pros?” + three role links. M 360w, T 684w, D 1237w.</li>
+          <li><b>Retro TV</b>Retro TV mockup with an embedded video fill. Replace the Video layer fill per screen.</li>
+        </ol>
+        <div class="chips"><span>Large desktop</span><span>Small desktop</span><span>Tablet landscape</span><span>Tablet portrait</span><span>Mobile</span></div>
+        <ul class="ins">
+          <li>Text over the coloured paths switches to white or stays dark depending on contrast: on WineExpert white gives 4.72:1; on WineVenue it stays dark, because white would drop to 3.91:1.</li>
+          <li>The “CONFIDENTIAL” tape can be moved with the keyboard: Tab to focus it and Enter moves it somewhere it doesn't cover anything.</li>
+          <li>With reduced motion, every animation stays in its final state and there's no parallax.</li>
+        </ul>
+      </section>
+
+
+      <div class="end">
+        <a class="btn" href="https://wineup.world" target="_blank" rel="noopener">View the site ↗</a>
+        <button class="js-next" data-next="try">Next poster: TRY* →</button>
+        <button class="js-back ghost">← Back to the desk</button>
+      </div>
+</template>
+<template id="tpl-try">
+      <div class="hero" style="grid-template-columns:1fr">
+        <div>
+          <div class="kicker">App móvil · Máster en diseño gráfico y UX/UI · 2026</div>
+          <h1>TRY<b>*</b></h1>
+          <p class="lead">Una app para que quien no sabe qué estudiar hable con profesionales de verdad y pruebe un trabajo antes de elegirlo.</p>
+        </div>
+      </div>
+      <dl>
+        <dt>Rol</dt><dd>UX/UI Designer, en solitario</dd>
+        <dt>Duración</dt><dd>3 semanas</dd>
+        <dt>Herramientas</dt><dd>Figma, Maze</dd>
+        <dt>Créditos</dt><dd>Ilustraciones: Milano (Streamline) · Textos con apoyo de ChatGPT y Gemini</dd>
+      </dl>
+
+      <section class="result">
+        <h2><small>EL RESULTADO</small>Mejor que contártelo.</h2>
+        <p>Es el prototipo de Figma tal cual se testeó en Maze: onboarding, inicio, chats y perfiles.</p>
+        <div class="device phone"><img class="cover" src="assets/try/cs/pant_bienvenida.webp" alt="">
+          <a class="play js-proto" href="https://www.figma.com/proto/RswytnVWUudseLW1YYXHie/PROYECTO-FINAL-ENTREGABLE?page-id=1%3A3048&amp;node-id=161-1602&amp;p=f&amp;viewport=498%2C31%2C0.08&amp;t=F18dyf9TWpjiws25-1&amp;scaling=scale-down&amp;content-scaling=fixed&amp;starting-point-node-id=161%3A1602&amp;show-proto-sidebar=1"
+             data-embed="https://embed.figma.com/proto/RswytnVWUudseLW1YYXHie/PROYECTO-FINAL-ENTREGABLE?page-id=1%3A3048&amp;node-id=161-1602&amp;starting-point-node-id=161%3A1602&amp;scaling=scale-down&amp;content-scaling=fixed&amp;hide-ui=1&amp;embed-host=share" target="_blank" rel="noopener">▶ Probar el prototipo</a></div>
+      </section>
+
+      <section>
+        <h2><small>01 · EL PROBLEMA</small>A los 18 te piden saber qué vas a ser.</h2>
+        <p>Y te lo piden como si fuera obvio. La información existe (grados, salidas, rankings), pero nadie te cuenta cómo es de verdad un trabajo ni si encajas ahí.</p>
+        <div class="stats">
+          <div><b>4 de 5</b><span>alumnos de Bachillerato no saben qué estudiar</span></div>
+          <div><b>55 %</b><span>elige sus estudios sin tener en cuenta sus intereses</span></div>
+        </div>
+        <div class="src">Fuente: Educaweb.</div>
+        <div class="bubbles">
+          <div class="bubble">Tengo 20 y nose quehacer con mi vida</div>
+          <div class="bubble">Este año cumplo 21 años y siento que voy tarde a todo</div>
+          <div class="bubble">Estoy en 2do semestre de Arquitectura y siento que me equivoqué</div>
+          <div class="bubble">No tengo el valor de dejarla porque siento que me van a criticar</div>
+        </div>
+        <div class="src">Comentarios reales en TikTok, recogidos en la netnografía.</div>
+      </section>
+
+      <section>
+        <h2><small>02 · LO QUE DESCUBRÍ</small>No están perdidos por falta de ganas.</h2>
+        <p>Hice 54 encuestas, entrevistas, netnografía, benchmarking y un DAFO. Esto es lo que más se repitió:</p>
+        <ul class="ins">
+          <li>El miedo a equivocarse bloquea más que la falta de interés.</li>
+          <li>Quieren orientación práctica, no teoría: ver un trabajo por dentro antes de comprometerse cuatro años.</li>
+          <li>Lo viven en soledad, y a muchos les da vergüenza admitir que están perdidos.</li>
+        </ul>
+        <blockquote class="small">«Sólo las redes sociales y mi círculo, tampoco es que hubiera un sitio donde acudir para resolver estas dudas.»<cite>Laura, 21 años, sobre cómo eligió carrera</cite></blockquote>
+        <blockquote>Lo que más buscan no es una respuesta correcta, sino un espacio donde poder equivocarse sin sentirse un fracaso.</blockquote>
+        <div class="stats">
+          <div><b>54</b><span>personas encuestadas</span></div>
+          <div><b>87 %</b><span>entre 15 y 30 años</span></div>
+          <div><b>48 %</b><span>estudiando una carrera</span></div>
+        </div>
+      </section>
+
+      <section>
+        <h2><small>03 · LA DECISIÓN CLAVE</small>Tres verbos. El último es el que nadie ofrece.</h2>
+        <div class="verbs"><span>Explorar</span><span>Preguntar</span><span>Probar</span></div>
+        <p>Explorar perfiles de profesionales con su trayectoria real, no un CV frío. Preguntar en mentorías 1:1. Y probar: con «Días conmigo» pasas un día con un profesional en su trabajo antes de elegir.</p>
+        <p>El tono va a juego: calma y seguridad, nada de lenguaje aspiracional. En TRY* no hay caminos correctos, solo cosas que probar.</p>
+        <figure><img class="zoom" src="assets/try/cs/sitemap.webp" alt="Site map de TRY*"><figcaption>Site map: Inicio, Comunidad, Chat y Perfil. Haz clic para ampliarlo.</figcaption></figure>
+      </section>
+
+      <section>
+        <h2><small>04 · EL OTRO LADO</small>Sin profesionales, no hay nada que explorar.</h2>
+        <p>TRY* es un marketplace, así que también entrevisté a quien tendría que abrir las puertas de su trabajo. Jose tiene una empresa de camiones:</p>
+        <blockquote class="small">«Hombre, yo creo que se aburriría un poco porque paso muchas horas conduciendo con la radio y ya. Pero bueno, el que quiera venir que venga.»<cite>Jose, empresa de transporte</cite></blockquote>
+        <p>Le interesaba, pero con una condición: que le compensara. De ahí sale el modelo. Los jóvenes pagan una suscripción y los profesionales cobran una comisión por cada mentoría o experiencia. Y como muchos usuarios son menores, todos los perfiles se verifican y los padres firman la autorización.</p>
+      </section>
+
+      <section>
+        <h2><small>05 · DEL BOCETO A LA PANTALLA</small>Primero la estructura, luego el color.</h2>
+        <div class="two">
+          <figure><img class="zoom" src="assets/try/cs/wireframes.webp" alt="Wireframes de baja fidelidad"><figcaption>Wireframes de baja fidelidad.</figcaption></figure>
+          <figure><img class="zoom" src="assets/try/cs/marca.webp" alt="Marca de TRY*: logo, paleta y tipografía"><figcaption>La marca: el asterisco naranja como único acento y una tipografía con caracteres alternativos.</figcaption></figure>
+        </div>
+        <div class="phones">
+          <figure><img src="assets/try/cs/pant_bienvenida.webp" alt="Pantalla de bienvenida"><figcaption>Bienvenida</figcaption></figure>
+          <figure><img src="assets/try/cs/pant_inicio.webp" alt="Pantalla de inicio"><figcaption>Inicio</figcaption></figure>
+          <figure><img src="assets/try/cs/pant_chats.webp" alt="Pantalla de chats"><figcaption>Chats</figcaption></figure>
+          <figure><img src="assets/try/cs/pant_perfil.webp" alt="Perfil de un profesional"><figcaption>Perfil de un profesional</figcaption></figure>
+        </div>
+        <blockquote class="small">«Me encanta la línea visual, en especial las ilustraciones y el cambio de tipografía en ciertos caracteres. Tiene mucho arte sevillano.»<cite>Participante del test con Maze</cite></blockquote>
+      </section>
+
+      <section>
+        <h2><small>06 · LO PROBÉ</small>Fácil de usar. El porqué, no tanto.</h2>
+        <p>Test con Maze: completar el onboarding, encontrar el perfil de un profesional y entrar en un chat.</p>
+        <div class="stats">
+          <div><b>76 %</b><span>entendió el onboarding sin explicación</span></div>
+          <div><b>71 %</b><span>puntuó la facilidad de uso con un 5/5</span></div>
+          <div><b>0</b><span>errores críticos</span></div>
+        </div>
+        <div class="heat">
+          <figure><img class="zoom" src="assets/try/cs/heat_explora.webp" alt="Mapa de calor del onboarding"><figcaption>Onboarding: explora, pregunta, prueba.</figcaption></figure>
+          <figure><img class="zoom" src="assets/try/cs/heat_conocer.webp" alt="Mapa de calor de la elección de perfil"><figcaption>¿Profesional o aprendiz?</figcaption></figure>
+          <figure><img class="zoom" src="assets/try/cs/heat_comunidad.webp" alt="Mapa de calor de Comunidad"><figcaption>Comunidad: historias de «Días conmigo».</figcaption></figure>
+        </div>
+        <figure><img class="zoom" src="assets/try/cs/flujo.webp" alt="Camino de los usuarios hasta el chat"><figcaption>Camino de los usuarios hasta el chat: casi todos llegan directos.</figcaption></figure>
+        <p style="margin-top:26px">Pero los comentarios dijeron algo que los números no:</p>
+        <blockquote class="small">«Está muy fácil de usar, pero no sé para qué sirve la app.»<cite>Participante del test con Maze</cite></blockquote>
+        <p>El test dejó tres mejoras: reforzar el mensaje inicial del onboarding, accesos más directos para quien va con prisa y una transición al inicio desde el asterisco.</p>
+      </section>
+
+      <section>
+        <h2><small>07 · LO QUE HARÍA AHORA</small>Que se entienda el para qué en un segundo.</h2>
+        <p>Antes que cómo se usa, que quede claro para qué sirve. Y probaría «Días conmigo» con profesionales de verdad, fuera de Figma.</p>
+        <p class="hook">Jose cree que nadie querría pasar un día en su camión. Yo creo que más de uno sí, y tengo alguna idea de cómo conseguirlo. ¿Lo hablamos?</p>
+      </section>
+
+
+      <div class="end">
+        <a class="btn" href="https://www.figma.com/proto/RswytnVWUudseLW1YYXHie/PROYECTO-FINAL-ENTREGABLE?page-id=1%3A3048&amp;node-id=161-1602&amp;p=f&amp;viewport=498%2C31%2C0.08&amp;t=F18dyf9TWpjiws25-1&amp;scaling=scale-down&amp;content-scaling=fixed&amp;starting-point-node-id=161%3A1602&amp;show-proto-sidebar=1" target="_blank" rel="noopener">Ver prototipo ↗</a>
+        <a class="btn ghost" href="https://www.figma.com/deck/Odm0r0PRIAUOUhm38otL4I" target="_blank" rel="noopener">Ver presentación ↗</a>
+        <button class="js-next" data-next="malaje">Siguiente cartel: Malaje →</button>
+        <button class="js-back ghost">← Volver a la mesa</button>
+      </div>
+</template>
+<template id="tpl-malaje">
+      <div class="hero" style="grid-template-columns:1fr">
+        <div>
+          <div class="kicker">eCommerce · Reto de diseño en público</div>
+          <h1>Malaje<b>.</b></h1>
+          <p class="lead">Una joyería con actitud, diseñada de cero en cinco días: marca, sistema de diseño y tienda online.</p>
+        </div>
+      </div>
+      <dl>
+        <dt>Rol</dt><dd>UI Designer, en solitario</dd>
+        <dt>Duración</dt><dd>5 días</dd>
+        <dt>Herramientas</dt><dd>Figma, Photoshop, Claude Code (conectado a Figma por MCP)</dd>
+      </dl>
+
+      <section class="result">
+        <h2><small>EL RESULTADO</small>Pasa el ratón por las joyas.</h2>
+        <p>El prototipo navegable, con las cuatro categorías y el cambio de foto al pasar por cada producto.</p>
+        <div class="device browser"><img class="cover" src="assets/malaje/cs/home.webp" alt="">
+          <a class="play js-proto" href="https://www.figma.com/proto/ynW3fhYtqiX1GEz48b5xeW/Malaje?node-id=8-148&amp;p=f&amp;viewport=207%2C86%2C0.12&amp;t=kqEjzfX3skeQaXoO-1&amp;scaling=min-zoom&amp;content-scaling=fixed&amp;starting-point-node-id=8%3A148&amp;page-id=8%3A147"
+             data-embed="https://embed.figma.com/proto/ynW3fhYtqiX1GEz48b5xeW/Malaje?node-id=8-148&amp;starting-point-node-id=8%3A148&amp;page-id=8%3A147&amp;scaling=min-zoom&amp;content-scaling=fixed&amp;hide-ui=1&amp;embed-host=share" target="_blank" rel="noopener">▶ Probar el prototipo</a></div>
+      </section>
+      <figure><img class="zoom" src="assets/malaje/cs/portada.webp" alt="Portada de la tienda Malaje"><figcaption>La portada: la joya dice el nombre antes que cualquier texto.</figcaption></figure>
+
+      <section>
+        <h2><small>01 · LA MARCA</small>Ni lujo inaccesible ni fast fashion.</h2>
+        <p>Quería una joyería con actitud pero sin complicarse: piezas con carácter para llevar de día y de noche, en cuatro líneas (pulseras, pendientes, anillos y collares).</p>
+        <p>Y tenía claro que la identidad tenía que hablar antes de que nadie leyera una palabra. Por eso el nombre va grabado en la propia joya, en la boca de la modelo.</p>
+      </section>
+
+      <section>
+        <h2><small>02 · DE LA REFERENCIA A LA DECISIÓN</small>Cada referencia, con su porqué.</h2>
+        <p>El moodboard no era solo inspiración. Al lado de cada referencia apunté qué me llevaba de ella: esquinas redondeadas y una barra limpia con el logo al centro, una portada con el nombre integrado en la imagen y, sobre todo, lo que pasa al pasar el ratón por un producto.</p>
+        <figure><img class="zoom" src="assets/malaje/cs/moodboard.webp" alt="Moodboard de Malaje con notas"><figcaption>Moodboard con mis notas. Haz clic para ampliarlo.</figcaption></figure>
+        <blockquote>En una joyería online no te puedes probar nada. Así que la tarjeta de producto te deja verla puesta.</blockquote>
+        <p>Cada tarjeta tiene dos estados: la joya sola sobre fondo blanco, limpia y sin distracciones, y la joya puesta en una persona, para que te la imagines en ti. Fue el primer componente que diseñé y el resto del sistema salió de ahí.</p>
+      </section>
+
+      <section>
+        <h2><small>03 · EL SISTEMA</small>Azul para confiar, beige para suavizar.</h2>
+        <p>Antes de tocar un componente, documenté la base. El azul da solidez y confianza; el beige aporta calidez y rebaja la seriedad. Para los títulos, Cormorant, elegante sin ser rígida, y Montserrat para que el texto se lea sin esfuerzo.</p>
+        <figure><img class="zoom" src="assets/malaje/cs/foundations.webp" alt="Colores y tipografía de Malaje" style="max-width:520px"><figcaption>Foundations: colores y escala tipográfica.</figcaption></figure>
+      </section>
+
+      <section>
+        <h2><small>04 · LAS PÁGINAS</small>Misma estructura, distinto contenido.</h2>
+        <p>Una portada y cuatro categorías con la misma estructura: acceso a todas arriba, la cuadrícula de productos y el pie. En móvil, la misma lógica: menú hamburguesa, dos columnas y cada categoría a un toque desde la portada.</p>
+        <figure><img class="zoom" src="assets/malaje/cs/paginas.webp" alt="La portada y las cuatro categorías"><figcaption>Portada, pulseras, pendientes, anillos y collares. Haz clic para ampliar.</figcaption></figure>
+        <div class="pages">
+          <figure><img class="zoom" src="assets/malaje/cs/home.webp" alt="Portada"><figcaption>Portada</figcaption></figure>
+          <figure><img class="zoom" src="assets/malaje/cs/pulseras.webp" alt="Pulseras"><figcaption>Pulseras</figcaption></figure>
+          <figure><img class="zoom" src="assets/malaje/cs/pendientes.webp" alt="Pendientes"><figcaption>Pendientes</figcaption></figure>
+          <figure><img class="zoom" src="assets/malaje/cs/movil.webp" alt="Móvil"><figcaption>Móvil</figcaption></figure>
+        </div>
+      </section>
+
+      <section>
+        <h2><small>05 · CÓMO LO HICE</small>Cinco días, en público, con IA para lo mecánico.</h2>
+        <p>Lo hice como reto público y lo fui contando en redes. Conecté Claude Code a Figma por MCP para la parte más mecánica: renombrar capas, ordenar el UI Kit y estructurar secciones. Ese tiempo lo gané para lo que importa: decidir.</p>
+        <p><a class="inline" href="https://www.instagram.com/reel/DW6qW0yjVh5/" target="_blank" rel="noopener">Ver el proceso en Instagram ↗</a></p>
+      </section>
+
+      <section>
+        <h2><small>06 · LO QUE HARÍA AHORA</small>Ponerlo delante de quien compra.</h2>
+        <p>Malaje todavía no ha pasado por usuarias. Lo primero que probaría es mi apuesta principal: si ver la joya puesta hace que se compre más que verla sola. Después, el flujo de compra completo, de la tarjeta al pago.</p>
+        <p class="hook">Mi apuesta es que sí. Y tengo claro cómo lo mediría, si te apetece que lo hablemos.</p>
+      </section>
+
+
+      <div class="end">
+        <a class="btn" href="https://www.figma.com/proto/ynW3fhYtqiX1GEz48b5xeW/Malaje?node-id=8-148&amp;p=f&amp;viewport=207%2C86%2C0.12&amp;t=kqEjzfX3skeQaXoO-1&amp;scaling=min-zoom&amp;content-scaling=fixed&amp;starting-point-node-id=8%3A148&amp;page-id=8%3A147" target="_blank" rel="noopener">Ver prototipo ↗</a>
+        <button class="js-back ghost">← Volver a la mesa</button>
+        <button class="js-next" data-next="wineup">Siguiente cartel: WineUp →</button>
+      </div>
+</template>
+<div id="camzoom" aria-hidden="true"><button class="x" data-i18n="close">Cerrar ✕</button>
+  <div class="big"><img src="assets/camara/00.webp" alt="">
+    <div class="lcd" role="menu">
+      <div class="bar"><span data-i18n="play">▶ REPRODUCIR</span><span>▮▮▮▯</span></div>
+      <div class="items">
+        <button role="menuitem" data-g="fotos" class="sel"><img id="lcd-f" alt=""><span><span data-i18n="photos">Fotos</span> · 42</span></button>
+        <button role="menuitem" data-g="videos"><img src="assets/gal/videos/v1_t.webp" alt=""><span><span data-i18n="videos">Vídeos</span> · 3</span></button>
+      </div>
+      <div class="hint2"><span><b data-k="l" role="button">◀</b><b data-k="r" role="button">▶</b> <span data-i18n="pickw">elegir</span> · <b data-k="ok" role="button">● OK</b></span><b data-k="esc" role="button">ESC</b></div>
+    </div>
+    <div class="pad"><button data-k="u" data-aria="padprev" aria-label="Anterior"></button><button data-k="l" data-aria="padprev" aria-label="Anterior"></button><button data-k="ok" aria-label="OK"></button><button data-k="r" data-aria="padnext" aria-label="Siguiente"></button><button data-k="d" data-aria="padnext" aria-label="Siguiente"></button></div>
+  </div>
+</div>
+<div id="gallery" aria-hidden="true">
+  <header><div class="t" data-i18n="cam">VISUALES CON IA</div>
+    <button data-g="fotos" data-i18n="photos">Fotos</button><button data-g="videos" data-i18n="videos">Vídeos</button><button class="close" data-i18n="close">Cerrar ✕</button></header>
+  <div id="gal-body"></div>
+</div>
+<template id="tpl-wineup">
+      <div class="hero" style="grid-template-columns:1fr">
+        <div>
+          <div class="kicker">Landing page · Publicada · 2026</div>
+          <h1>WineUp<b>.</b></h1>
+          <p class="lead">La landing de una red social del vino para gente que no sabe de vino. Y para los que sí.</p>
+        </div>
+      </div>
+      <dl>
+        <dt>Rol</dt><dd>Concepto, diseño y handoff, en solitario (el desarrollo no es mío)</dd>
+        <dt>Herramientas</dt><dd>Figma, con anotaciones en Dev Mode</dd>
+        <dt>Alcance</dt><dd>4 páginas, 5 tamaños de pantalla, en español y en inglés</dd>
+        <dt>En vivo</dt><dd><a class="inline" href="https://wineup.world" target="_blank" rel="noopener">wineup.world ↗</a></dd>
+      </dl>
+
+      <section class="result">
+        <h2><small>EL RESULTADO</small>Está publicada.</h2>
+        <p>Entra en escritorio y arrastra el móvil por encima de una botella.</p>
+        <div class="device browser"><img class="cover" src="assets/wineup/cs/hero.webp" alt="">
+          <a class="play" href="https://wineup.world" target="_blank" rel="noopener">Abrir wineup.world ↗</a></div>
+      </section>
+
+      <section>
+        <h2><small>01 · EL RETO</small>Cuatro públicos y ninguno quiere un examen.</h2>
+        <p>WineUp le habla a la vez a quien bebe vino (WineLovers), a quien sabe de vino (WineExperts), a las bodegas (WineMakers) y a los bares y restaurantes (WineVenues). La landing tenía que convencer a los cuatro sin asustar a nadie que no sepa distinguir un tempranillo de un garnacha.</p>
+        <blockquote>Wine is not an exam.<cite>La idea de fondo, en una línea de mi archivo de Figma</cite></blockquote>
+      </section>
+
+      <section>
+        <h2><small>02 · LA DECISIÓN CLAVE</small>Enseñar la app en lugar de explicarla.</h2>
+        <p>En la home no hay un vídeo de cómo funciona: hay un móvil que puedes arrastrar con el ratón. Cuando lo pasas por encima de un vino, lo escanea delante de ti, con las mismas pantallas de la app: reposo, escaneo, escaneando y resultado. En móvil y tablet el móvil no aparece.</p>
+        <div class="hscroll"><img class="zoom" src="assets/wineup/cs/home.webp" alt="Home de la landing de WineUp"></div>
+        <figcaption>La home completa. Desliza para recorrerla o haz clic para ampliarla.</figcaption>
+      </section>
+
+      <section>
+        <h2><small>03 · UNA MARCA CON MANO</small>Garabatos, polaroids y frases que se recuerdan.</h2>
+        <p>Nada de copas sobre manteles blancos. La landing parece un corcho lleno de cosas: polaroids de gente pasándolo bien, pegatinas que se pueden arrastrar (una lleva un QR que se escanea de verdad), una tele antigua con vídeo y textos escritos a mano. Y un tono que no se toma el vino demasiado en serio:</p>
+        <div class="stickers">
+          <span>Wine is not an exam</span><span>So… you joining?</span><span>Click here, thank us later</span><span>Slide into our inbox</span>
+          <span>Scan this or miss out</span><span>Have a glass while we review it</span><span>Stop staring at the screen, the wine is getting warm</span><span>Zero wine, zero content</span>
+        </div>
+        <figcaption>Microcopy de la landing, del 404 y de la verificación de cuenta.</figcaption>
+      </section>
+
+      <section>
+        <h2><small>04 · UNA PÁGINA POR PERFIL</small>Misma estructura, tres colores.</h2>
+        <p>Cada perfil profesional tiene su página: qué puedes hacer hoy, qué viene después (tapado con cinta de «CONFIDENTIAL», que también se arrastra) y un camino de post-its numerados para unirte. Las bodegas terminan en un formulario para reclamar su perfil.</p>
+        <div class="hscroll"><img class="zoom" src="assets/wineup/cs/expert.webp" alt="Página WineExpert"></div>
+        <div class="hscroll"><img class="zoom" src="assets/wineup/cs/maker.webp" alt="Página WineMaker con el formulario"></div>
+        <div class="hscroll"><img class="zoom" src="assets/wineup/cs/venue.webp" alt="Página WineVenue"></div>
+        <figcaption>WineExpert, WineMaker (con el formulario) y WineVenue.</figcaption>
+      </section>
+
+      <section>
+        <h2><small>05 · PENSADO PARA CONSTRUIRSE</small>Yo no lo programé, así que lo dejé todo escrito.</h2>
+        <p>Cada pieza interactiva lleva su nota para desarrollo en Dev Mode: qué hace en escritorio, qué cambia en tablet y móvil, y cómo se usa con teclado. Estas son algunas, con su texto original:</p>
+        <div class="hscroll anno"><div class="annobox"><img src="assets/wineup/cs/home.webp" alt="Home con anotaciones">
+          <i style="left:28%;top:52%">1</i><i style="left:94%;top:20%">2</i><i style="left:72%;top:42%">3</i><i style="left:47%;top:22%">4</i><i style="left:12%;top:85%">5</i><i style="left:8%;top:60%">6</i>
+        </div></div>
+        <ol class="notes">
+          <li><b>Phone prototype</b>Desktop only (no phone prototype on mobile and tablet). The user drags the phone with the mouse or by touch. When a wine sits behind it, the phone runs the app prototype screens (Default, Scan, Scanning, Final).</li>
+          <li><b>QR sticker</b>Draggable anywhere on the screen. The QR can be scanned, and a click or tap without dragging opens the store.</li>
+          <li><b>Helloo bubble</b>Desktop: colour changes on hover, click opens mailto: to WineUp support. Mobile and tablet: tap opens the mailto:.</li>
+          <li><b>Handwritten texts</b>Exported as SVG/image, never a web font.</li>
+          <li><b>Pros links</b>“Are you one of our pros?” + three role links. M 360w, T 684w, D 1237w.</li>
+          <li><b>Retro TV</b>Retro TV mockup with an embedded video fill. Replace the Video layer fill per screen.</li>
+        </ol>
+        <div class="chips"><span>Escritorio grande</span><span>Escritorio pequeño</span><span>Tablet horizontal</span><span>Tablet vertical</span><span>Móvil</span></div>
+        <ul class="ins">
+          <li>El texto sobre los caminos de color cambia a blanco o se queda oscuro según el contraste: en WineExpert el blanco da 4,72:1; en WineVenue se queda oscuro, porque el blanco bajaría a 3,91:1.</li>
+          <li>La cinta de «CONFIDENTIAL» se puede mover con teclado: Tab para enfocarla y Enter la lleva a un sitio donde no tape nada.</li>
+          <li>Con movimiento reducido, cada animación se queda en su estado final y no hay parallax.</li>
+        </ul>
+      </section>
+
+
+      <div class="end">
+        <a class="btn" href="https://wineup.world" target="_blank" rel="noopener">Ver la web ↗</a>
+        <button class="js-next" data-next="try">Siguiente cartel: TRY* →</button>
+        <button class="js-back ghost">← Volver a la mesa</button>
+      </div>
+</template>
+<div id="mwback"></div><div id="mwfly" aria-hidden="true"><img src="assets/espejo/00.webp" alt=""><div class="fg"></div></div>
+<div id="mw" role="dialog" aria-modal="true" aria-label="Cómo hice este portfolio" aria-hidden="true">
+  <div class="bgimg"></div><div class="fog"></div><div id="mwcur" aria-hidden="true"><svg viewBox="0 0 24 30" width="100%" style="display:block"><path d="M3 2 L3 24.5 L8.6 19.2 L12.6 27.8 L16.6 26 L12.7 17.6 L20.4 17.6 Z" fill="#e6ebf0" stroke="#2a2a2e" stroke-width="1.6" stroke-linejoin="round"/></svg></div>
+  <button class="x" type="button" data-mw="close" data-i18n="mwclose">Volver a la mesa ✕</button>
+  <div class="in cur" data-l="es">
+    <h2>Al otro lado del espejo</h2>
+    <div class="leadrow"><p class="lead">Aquí cuento cómo hice este portfolio: de dónde salió la idea, qué se quedó por el camino y cómo un cartel plano acabó encima de una mesa en 3D.</p><img class="trust" src="assets/espejo/mk/trust.webp" alt="Pegatina: Trust me, I'm graphic designer"></div>
+
+    <section>
+      <h3>Una mesa en vez de un <em>scroll</em></h3>
+      <div class="body">
+        <p>Quien revisa portfolios abre decenas al día, y casi todos se parecen: scroll, tres proyectos, contacto. Yo quería que el mío se recordara, pero sin hacerle perder el tiempo a nadie.</p>
+        <p>Por eso es una mesa de trabajo, y cada objeto es una sección. Los carteles son mis proyectos, el teléfono sirve para llamarme, el cuaderno cuenta quién soy, la cámara guarda lo que hago con IA y el espejo es esto.</p>
+      </div>
+      <div class="drops">
+        <div class="drop"><b>Yoyo, un personaje que te guiaba</b><span>Me encantaba, pero acababa siendo más protagonista que los proyectos.</span></div>
+        <div class="drop"><b>Un interruptor para apagar la luz</b><span>No encontré qué enseñar a oscuras que aportara algo, por ejemplo en la landing de WineUp.</span></div>
+        <div class="drop"><b>Una experiencia larga y narrativa</b><span>Si lo complico demasiado, saboteo la experiencia de quien lo revisa.</span></div>
+      </div>
+      <p class="hand" style="margin-top:44px">lo que se quedó por el camino ↑</p>
+    </section>
+
+    <section>
+      <h3>De un cartel plano a una mesa en 3D</h3>
+      <ol class="steps">
+        <li><div><span class="tool">Affinity</span><p class="body">Diseñé un cartel por proyecto, como si fueran a acabar pegados en la pared de un estudio.</p>
+          <div class="row"><img src="assets/espejo/mk/wineup_flat.webp" alt="Cartel de WineUp en plano" style="width:150px;transform:rotate(-3deg)"><img src="assets/espejo/mk/try_flat.webp" alt="Cartel de TRY* en plano" style="width:150px;transform:rotate(2deg)"><img src="assets/espejo/mk/malaje_flat.webp" alt="Cartel de Malaje en plano" style="width:150px;transform:rotate(-1deg)"></div></div></li>
+        <li><div><span class="tool">Blender</span><p class="body">Los llevé a 3D para que tuvieran papel de verdad: pliegues, sombras y la luz de una ventana. El arrugado que ves al pasar el ratón son 8 fotogramas renderizados. El teléfono, el cuaderno, la cámara y este espejo están hechos igual.</p>
+          <div class="row">
+            <figure><div class="ba" tabindex="0" role="slider" aria-label="Comparar cartel plano y en 3D" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50">
+              <img src="assets/espejo/mk/try_3d.webp" alt="Cartel de TRY* renderizado en 3D"><img class="top" src="assets/espejo/mk/try_flat.webp" alt="Cartel de TRY* en plano">
+              <span class="lbl" style="left:10px">plano</span><span class="lbl" style="right:10px">en 3D</span><i class="handle"></i></div>
+              <figcaption>arrastra para comparar</figcaption></figure>
+            <figure><img class="crumple" src="assets/try/00.webp" alt="Animación del cartel arrugándose" style="width:300px;box-shadow:none;margin-bottom:-30px"><figcaption>el hover de los carteles, en bucle</figcaption></figure>
+          </div>
+          <p class="hand" style="margin-top:22px">y el reflejo de este espejo es la foto de un techo de verdad, desenfocada</p></div></li>
+        <li><div><span class="tool">Canva</span><p class="body">El cuaderno lo maqueté en Canva, con mis fotos y uno de mis cuadros. Después la portada pasó por Blender para que pareciera un cuaderno de verdad sobre la mesa.</p>
+          <div class="row"><img src="assets/cuaderno/pag2.webp" alt="Página del cuaderno: ¡Hola!" style="width:150px;transform:rotate(-2deg)"><img src="assets/cuaderno/pag3.webp" alt="Página del cuaderno: lo que he hecho" style="width:150px;transform:rotate(2deg)"></div></div></li>
+        <li><div><span class="tool">Higgsfield</span><p class="body">Las fotos y los vídeos que guarda la cámara los generé con Higgsfield.</p>
+          <div class="row"><img src="assets/gal/fotos/03_t.webp" alt="" style="width:130px;transform:rotate(-2deg)"><img src="assets/gal/fotos/11_t.webp" alt="" style="width:130px;transform:rotate(3deg)"><img src="assets/gal/fotos/20_t.webp" alt="" style="width:130px;transform:rotate(-1deg)"></div></div></li>
+        <li><div><span class="tool">Claude Code</span><p class="body">Con Claude Code construí la web. Yo decidía cada interacción y cómo tenía que sentirse; la probábamos, la ajustaba y vuelta a empezar hasta que funcionaba. Así una idea no se queda en un mockup: llega a algo que se puede usar.</p></div></li>
+      </ol>
+    </section>
+
+    <section>
+      <h3>Que lo creativo no estorbe</h3>
+      <div class="ux">
+        <div><h4>Un botón para <i>ordenar</i></h4><p>Pone carteles y objetos rectos, en dos filas y al mismo tamaño. Si tienes prisa, no tienes que jugar.</p></div>
+        <div><h4>En el móvil, la mesa desaparece</h4><p>Solo carteles en columna y un menú. Con el pulgar manda la rapidez, no el efecto.</p></div>
+        <div><h4>Una llamada sin palabras</h4><p>El teléfono solo enseña mi nombre y los botones de descolgar y colgar, así funciona igual en español y en inglés.</p></div>
+        <div><h4>Los carteles hablan solos</h4><p>No hay etiquetas encima del diseño: cada cartel se presenta solo, y el contexto está dentro de su case study.</p></div>
+      </div>
+    </section>
+
+    <section class="end">
+      <h3>¿Te lo cuento con más calma?</h3>
+      <div class="btns"><button class="main" type="button" data-mw="talk">Escríbeme</button><button class="ghost" type="button" data-mw="close">Volver a la mesa</button></div>
+    </section>
+  </div>
+  <div class="in" data-l="en">
+    <h2>Through the looking glass</h2>
+    <div class="leadrow"><p class="lead">This is how I made this portfolio: where the idea came from, what got left behind and how a flat poster ended up on a 3D desk.</p><img class="trust" src="assets/espejo/mk/trust.webp" alt="Sticker: Trust me, I'm graphic designer"></div>
+
+    <section>
+      <h3>A desk instead of a <em>scroll</em></h3>
+      <div class="body">
+        <p>People who review portfolios open dozens a day, and almost all of them look alike: scroll, three projects, contact. I wanted mine to be remembered, without wasting anyone's time.</p>
+        <p>So it's a work desk, and every object is a section. The posters are my projects, the phone is for calling me, the notebook tells you who I am, the camera holds what I make with AI and the mirror is this.</p>
+      </div>
+      <div class="drops">
+        <div class="drop"><b>Yoyo, a character to guide you</b><span>I loved it, but it ended up stealing the spotlight from the projects.</span></div>
+        <div class="drop"><b>A switch to turn off the light</b><span>I couldn't find anything worth showing in the dark, for example on the WineUp landing.</span></div>
+        <div class="drop"><b>A long, narrative experience</b><span>If I make it too complicated, I sabotage the experience of whoever's reviewing it.</span></div>
+      </div>
+      <p class="hand" style="margin-top:44px">what got left behind ↑</p>
+    </section>
+
+    <section>
+      <h3>From a flat poster to a 3D desk</h3>
+      <ol class="steps">
+        <li><div><span class="tool">Affinity</span><p class="body">I designed a poster for each project, as if they were going to end up on a studio wall.</p>
+          <div class="row"><img src="assets/espejo/mk/wineup_flat.webp" alt="Flat WineUp poster" style="width:150px;transform:rotate(-3deg)"><img src="assets/espejo/mk/try_flat.webp" alt="Flat TRY* poster" style="width:150px;transform:rotate(2deg)"><img src="assets/espejo/mk/malaje_flat.webp" alt="Flat Malaje poster" style="width:150px;transform:rotate(-1deg)"></div></div></li>
+        <li><div><span class="tool">Blender</span><p class="body">I took them into 3D so they'd feel like real paper: folds, shadows and light from a window. The crumple you see on hover is 8 rendered frames. The phone, the notebook, the camera and this mirror are made the same way.</p>
+          <div class="row">
+            <figure><div class="ba" tabindex="0" role="slider" aria-label="Compare the flat and 3D poster" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50">
+              <img src="assets/espejo/mk/try_3d.webp" alt="TRY* poster rendered in 3D"><img class="top" src="assets/espejo/mk/try_flat.webp" alt="Flat TRY* poster">
+              <span class="lbl" style="left:10px">flat</span><span class="lbl" style="right:10px">in 3D</span><i class="handle"></i></div>
+              <figcaption>drag to compare</figcaption></figure>
+            <figure><img class="crumple" src="assets/try/00.webp" alt="Poster crumpling animation" style="width:300px;box-shadow:none;margin-bottom:-30px"><figcaption>the poster hover, on a loop</figcaption></figure>
+          </div>
+          <p class="hand" style="margin-top:22px">and the reflection in this mirror is a photo of a real ceiling, blurred</p></div></li>
+        <li><div><span class="tool">Canva</span><p class="body">I laid out the notebook in Canva, with my photos and one of my paintings. Then the cover went through Blender so it would look like a real notebook on the desk.</p>
+          <div class="row"><img src="assets/cuaderno/pag2_en.webp" alt="Notebook page: Hello!" style="width:150px;transform:rotate(-2deg)"><img src="assets/cuaderno/pag3_en.webp" alt="Notebook page: what I've done" style="width:150px;transform:rotate(2deg)"></div></div></li>
+        <li><div><span class="tool">Higgsfield</span><p class="body">I generated the photos and videos in the camera with Higgsfield.</p>
+          <div class="row"><img src="assets/gal/fotos/03_t.webp" alt="" style="width:130px;transform:rotate(-2deg)"><img src="assets/gal/fotos/11_t.webp" alt="" style="width:130px;transform:rotate(3deg)"><img src="assets/gal/fotos/20_t.webp" alt="" style="width:130px;transform:rotate(-1deg)"></div></div></li>
+        <li><div><span class="tool">Claude Code</span><p class="body">I built the site with Claude Code. I decided every interaction and how it should feel; we'd test it, I'd tweak it and go again until it worked. That way an idea doesn't stay a mockup: it becomes something you can use.</p></div></li>
+      </ol>
+    </section>
+
+    <section>
+      <h3>Creative, but never in the way</h3>
+      <div class="ux">
+        <div><h4>A button to <i>tidy up</i></h4><p>It straightens posters and objects into two rows, at the same size. If you're in a hurry, you don't have to play.</p></div>
+        <div><h4>On mobile, the desk disappears</h4><p>Just posters in a column and a menu. With a thumb, speed wins over effects.</p></div>
+        <div><h4>A call without words</h4><p>The phone only shows my name and the answer and decline buttons, so it works the same in Spanish and English.</p></div>
+        <div><h4>The posters speak for themselves</h4><p>No labels on top of the design: each poster introduces itself, and the context lives inside its case study.</p></div>
+      </div>
+    </section>
+
+    <section class="end">
+      <h3>Want the longer version?</h3>
+      <div class="btns"><button class="main" type="button" data-mw="talk">Write to me</button><button class="ghost" type="button" data-mw="close">Back to the desk</button></div>
+    </section>
+  </div>
+</div>
+<div id="bookwrap" aria-hidden="true" role="dialog" aria-label="Sobre mí" data-aria="aboutme">
+  <button class="x" type="button" data-act="close" data-i18n="close">Cerrar ✕</button>
+  <div id="book"></div>
+  <div id="booknav"><button type="button" data-act="prev" data-i18n="bprev">← Atrás</button><span id="bookpos">1/3</span><button type="button" data-act="next" data-i18n="bnext">Sigue →</button></div>
+</div>
+<div id="lightbox"><button class="nav prev" data-aria="padprev" aria-label="Anterior">‹</button><img alt=""><button class="nav next" data-aria="padnext" aria-label="Siguiente">›</button><span class="count"></span><button class="lbx" data-aria="closex" aria-label="Cerrar">✕</button></div>
+<div id="toast"></div>
+
+<script>
+const T = {
+  es: { lng: "Idioma", menu: "Menú", closex: "Cerrar", poster: "Cartel de ", sort: "Ordenar", unsort: "Desordenar", contact: "Contacto", about: "Trayectoria", back: "← Volver a la mesa", bprev: "← Atrás", bnext: "Sigue →", mwclose: "Volver a la mesa ✕", cvsoon: "El CV llega en breve", figma: "Prototipo de Figma", aboutme: "Sobre mí", mirdesc: "Al otro lado del espejo: cómo hice este portfolio.", mirmeta: "Proceso · Herramientas", howto: "Cómo lo hice", talk: "¿HABLAMOS?",
+        note: "Prototipo: pasa el ratón por los objetos", call: "llámame", story: "mi historia",
+        play: "▶ REPRODUCIR", pick: "◀ ▶ elegir · ● OK", pickw: "elegir", padprev: "Anterior", padnext: "Siguiente", cam: "VISUALES CON IA", cam2: "Visuales con IA", camsub: "Fotos y vídeos que he creado con Higgsfield", photos: "Fotos", videos: "Vídeos", close: "Cerrar ✕",
+        gw: "Para WineUp", gl: "Para ???", gv: "Anuncios para WineUp", look: "mira" },
+  en: { lng: "Language", menu: "Menu", closex: "Close", poster: "Poster for ", sort: "Sort", unsort: "Shuffle", contact: "Contact", about: "Journey", back: "← Back to the desk", bprev: "← Back", bnext: "Next →", mwclose: "Back to the desk ✕", cvsoon: "My CV is coming soon", figma: "Figma prototype", aboutme: "About me", mirdesc: "Through the looking glass: how I made this portfolio.", mirmeta: "Process · Tools", howto: "How I made it", talk: "LET'S TALK",
+        note: "Prototype: hover over the objects", call: "call me", story: "my story",
+        play: "▶ PLAYBACK", pick: "◀ ▶ select · ● OK", pickw: "select", padprev: "Previous", padnext: "Next", cam: "AI VISUALS", cam2: "AI visuals", camsub: "Photos and videos I made with Higgsfield", photos: "Photos", videos: "Videos", close: "Close ✕",
+        gw: "For WineUp", gl: "For ???", gv: "Ads for WineUp", look: "look" }
+};
+const PROJECTS = [
+  { id: "wineup", frames: 8, x: 200, y: 185, r: -4, gx: 192, gy: -22,
+    es: ["WineUp", "Una red social del vino que no huele a bodega.", "Concepto y diseño · En solitario · 2026"],
+    en: ["WineUp", "A wine social network that doesn't smell like a cellar.", "Concept & design · Solo · 2026"] },
+  { id: "try", frames: 8, x: 472, y: 95, r: 3, gx: 471, gy: -22,
+    es: ["TRY*", "Para cuando no sabes qué estudiar y Google no ayuda.", "Product designer"],
+    en: ["TRY*", "For when you don't know what to study and Google doesn't help.", "Product designer"] },
+  { id: "malaje", frames: 8, x: 745, y: 200, r: -2, gx: 750, gy: -22,
+    es: ["Malaje", "Mucho arte para una marca que se llama Malaje.", "Identidad visual, UI y sistema de diseño"],
+    en: ["Malaje", "A jewellery brand, from identity to checkout.", "Visual identity, UI & design system"] },
+];
+let lang = "es", sorted = false;
+const stage = document.getElementById("stage");
+
+/* reproduce una secuencia de fotogramas hacia delante (hover) o hacia atrás (salida) */
+function sequence(img, srcs, el) {
+  srcs.forEach(s => { const i = new Image(); i.src = s; });
+  let cur = 0, target = 0, timer = null;
+  const step = () => {
+    if (cur === target) { timer = null; return; }
+    cur += cur < target ? 1 : -1; img.src = srcs[cur]; timer = setTimeout(step, 38);
+  };
+  const go = t => { target = t; if (!timer) step(); };
+  el.addEventListener("mouseenter", () => go(srcs.length - 1));
+  el.addEventListener("mouseleave", () => go(0));
+  el.addEventListener("focus", () => go(srcs.length - 1));
+  el.addEventListener("blur", () => go(0));
+}
+const frames = (id, n) => Array.from({ length: n }, (_, i) => `assets/${id}/${String(i).padStart(2, "0")}.webp`);
+
+function make(cls, id, w) {
+  const el = document.createElement("div"); el.className = "obj " + cls; if (id) el.id = id;
+  el.tabIndex = 0; el.setAttribute("role", "button"); stage.appendChild(el); return el;
+}
+
+PROJECTS.forEach(p => {
+  const el = make("poster"); p.el = el;
+  const img = document.createElement("img"); const fr = frames(p.id, p.frames); img.src = fr[0]; img.alt = "";
+  const tag = document.createElement("div"); tag.className = "tag";
+  el.append(img, tag); sequence(img, fr, el);
+  // clic: aquí se abrirá el case study
+});
+
+const phone = make("", "phone");
+phone.innerHTML = `<div class="ring"><img src="assets/telefono/00.webp" alt=""><img class="call" src="assets/telefono/01.webp" alt=""></div><span class="hint" data-i18n="call" style="left:150px;top:-10px">llámame</span>`;
+Object.assign(phone.style, { left: "0px", top: "310px", transform: "rotate(8deg)" });
+
+const nb = make("", "notebook");
+const nbImg = document.createElement("img"); const nbFr = frames("cuaderno", 10); nbImg.src = nbFr[0]; nbImg.alt = "";
+nb.appendChild(nbImg); nb.insertAdjacentHTML("beforeend", `<span class="hint" data-i18n="story" style="left:20px;top:-6px">mi historia</span>`);
+sequence(nbImg, nbFr, nb);
+Object.assign(nb.style, { transform: "rotate(-11deg)" }); nb.style.zIndex = 5;
+
+const mirror = make("", "mirror");
+mirror.innerHTML = `<img src="assets/espejo/00.webp" alt=""><div class="glass"><div class="refl"><svg viewBox="0 0 24 30" width="100%" style="display:block"><path d="M3 2 L3 24.5 L8.6 19.2 L12.6 27.8 L16.6 26 L12.7 17.6 L20.4 17.6 Z" fill="#e6ebf0" stroke="#2a2a2e" stroke-width="2" stroke-linejoin="round"/></svg></div></div>`;
+const glass = mirror.querySelector(".glass"), refl = mirror.querySelector(".refl");
+// el cursor flota sobre el cristal: su reflejo aparece volteado, desplazado y en perspectiva
+// pasa de coordenadas de pantalla a coordenadas del cristal (deshace escena, giro y escala del espejo)
+function toGlass(cx, cy) {
+  const sr = stage.getBoundingClientRect();
+  const sx = (cx - sr.left) / SCALE, sy = (cy - sr.top) / SCALE;
+  const w = mirror.offsetWidth, h = mirror.offsetHeight;
+  const mx = parseFloat(mirror.style.left) + w / 2, my = parseFloat(mirror.style.top) + h / 2;
+  const r = (sorted ? 0 : MIRROR.r) * Math.PI / 180, k = .9;
+  const dx = sx - mx, dy = sy - my;
+  const lx = (dx * Math.cos(-r) - dy * Math.sin(-r)) / k + w / 2, ly = (dx * Math.sin(-r) + dy * Math.cos(-r)) / k + h / 2;
+  return [lx - glass.offsetLeft, ly - glass.offsetTop, 1 / (SCALE * k)];
+}
+glass.addEventListener("pointermove", e => {
+  const [x, y, u] = toGlass(e.clientX, e.clientY);   // u = unidades del cristal por píxel de pantalla
+  refl.style.width = (20 * u) + "px";   // como en un espejo de verdad: derecho, un poco desplazado por la profundidad del cristal
+  refl.style.left = (x + 7 * u) + "px"; refl.style.top = (y + 9 * u) + "px";
+});
+mirror.setAttribute("aria-label", T[lang].howto);
+const MIRROR = { el: mirror, x: 1018, y: 75, r: 4, gx: 1029, gy: -22 };
+phone.insertAdjacentHTML("beforeend", '<span class="otag" data-i18n="contact"></span>'); nb.insertAdjacentHTML("beforeend", '<span class="otag" data-i18n="aboutme"></span>');
+mirror.insertAdjacentHTML("beforeend", '<div class="tag"></div>');
+
+const OBJ_ROW = [  // al ordenar: en línea, centrados bajo los carteles (x, y del centro; escala)
+  () => [phone, 482, 678, 1, 240, 389], () => [nb, 800, 678, 1, 300, 383], () => { try { return [cam, 1112, 678, 1, 320, 237]; } catch (e) { return [null]; } }];
+function placeObj(el, cx, cy, s, w, hh) { el.style.left = (cx - w / 2) + "px"; el.style.top = (cy - hh / 2) + "px"; el.style.transform = `rotate(0deg) scale(${s})`; el.style.setProperty("--s", s); }
+function layout() {
+  [...PROJECTS, MIRROR].forEach(p => {
+    p.el.style.left = (sorted ? p.gx : p.x) + "px";
+    p.el.style.top = (sorted ? p.gy : p.y) + "px";
+    p.el.style.transform = sorted ? "scale(.9)" : `rotate(${p.r}deg) scale(.9)`;
+  });
+  if (sorted) { OBJ_ROW.forEach(f => { const a = f(); if (a[0]) placeObj(...a); }); }
+  else {
+    Object.assign(phone.style, { left: "0px", top: "310px", transform: "rotate(8deg)" });
+    Object.assign(nb.style, { left: "1290px", top: "470px", transform: "rotate(-11deg)" });
+    if (typeof cam !== "undefined") Object.assign(cam.style, { left: "470px", top: "605px", transform: "rotate(-6deg)" });
+    [phone, nb, typeof cam !== "undefined" ? cam : null].forEach(el => el && el.style.setProperty("--s", 1));
+  }
+  stage.classList.toggle("sorted", sorted);
+  document.getElementById("btn-sort").setAttribute("aria-pressed", sorted);
+  document.getElementById("btn-sort").textContent = T[lang][sorted ? "unsort" : "sort"];
+}
+let SCALE = 1;
+function fit() {
+  const s = SCALE = Math.min(innerWidth / 1600, (innerHeight - 20) / 900);
+  stage.style.transform = `translate(${-800 * s}px, ${-450 * s + 10}px) scale(${s})`;
+}
+function texts() {
+  document.documentElement.lang = lang;
+  document.querySelectorAll("[data-i18n]").forEach(n => n.textContent = T[lang][n.dataset.i18n]);
+  document.getElementById("btn-lang").textContent = lang === "es" ? "EN" : "ES";
+  PROJECTS.forEach(p => { const [a, b, c] = p[lang]; p.el.querySelector(".tag").innerHTML = `<b>${a}</b><span>${b}</span><i>${c}</i>`; });
+  mirror.querySelector(".tag").innerHTML = `<b>${T[lang].howto}</b><span>${T[lang].mirdesc}</span><i>${T[lang].mirmeta}</i>`;
+  document.getElementById("list").innerHTML = PROJECTS.map(p => `<figure><img src="assets/${p.id}/00.webp" alt="${p[lang][0]}"><figcaption><b>${p[lang][0]}</b><span>${p[lang][1]}</span></figcaption></figure>`).join("")
+    + `<figure data-mirror="1"><img src="assets/espejo/00.webp" alt="${T[lang].howto}"><figcaption><b>${T[lang].howto}</b><span>${T[lang].mirdesc}</span></figcaption></figure>`
+    + `<div class="objs"><figure data-obj="book"><img src="assets/cuaderno/00.webp" alt="${T[lang].aboutme}"><span class="mhint">${T[lang].story}</span></figure>`
+    + `<figure data-obj="cam"><img src="assets/camara/00.webp" alt="${T[lang].cam2}"><span class="mhint">${T[lang].look}</span></figure></div>`;
+  document.querySelectorAll("[data-aria]").forEach(n => n.setAttribute("aria-label", T[lang][n.dataset.aria]));
+  try { mirror.setAttribute("aria-label", T[lang].howto); } catch (e) {}
+  try { cam.setAttribute("aria-label", T[lang].cam2); } catch (e) {}
+  try { if (openP) document.getElementById("case-poster").alt = T[lang].poster + openP[lang][0]; } catch (e) {}
+  document.querySelectorAll("#mw .in").forEach(n => n.classList.toggle("cur", n.dataset.l === lang));
+  try { if (openP) fill(openP); } catch (e) {}
+  try { if (bookOpen) { const t = turned; buildBook(); turned = t; stackLeaves(); updNav(); } } catch (e) {}
+  layout();
+}
+const contact = document.getElementById("contact"), scrim = document.getElementById("scrim");
+const openContact = v => { contact.classList.toggle("open", v); scrim.classList.toggle("open", v); contact.setAttribute("aria-hidden", !v); };
+phone.addEventListener("click", () => openContact(true));
+phone.addEventListener("keydown", e => { if (e.key === "Enter") openContact(true); });
+document.getElementById("btn-contact").onclick = document.getElementById("m-contact").onclick = () => openContact(true);
+contact.querySelector(".close").onclick = scrim.onclick = () => openContact(false);
+document.addEventListener("keydown", e => { if (e.key === "Escape") openContact(false); });
+async function closeAll() {
+  try { if (lightbox.classList.contains("show")) lightbox.classList.remove("show"); } catch (e) {}
+  const jobs = [];
+  try { if (openP) jobs.push(closeCase()); } catch (e) {}
+  try { if (camOpen) jobs.push(closeCamUI()); } catch (e) {}
+  try { if (gallery.style.display === "block") closeGallery(); } catch (e) {}
+  try { if (bookOpen) jobs.push(closeBook()); } catch (e) {}
+  try { if (mwOpen) jobs.push(closeMirror()); } catch (e) {}
+  await Promise.all(jobs);
+}
+document.getElementById("btn-sort").onclick = () => { sorted = !sorted; layout(); };
+document.getElementById("mback").addEventListener("click", () => closeAll());
+document.querySelector("header .name").addEventListener("click", () => { document.getElementById("menu").classList.remove("open"); closeAll(); });
+document.getElementById("btn-lang").onclick = () => { lang = lang === "es" ? "en" : "es"; texts(); };
+document.getElementById("btn-burger").onclick = () => document.getElementById("menu").classList.toggle("open");
+/* ---------- case study: el cartel vuela y se convierte en portada ---------- */
+const caseEl = document.getElementById("case"), casePoster = document.getElementById("case-poster");
+const lightbox = document.getElementById("lightbox"), toast = document.getElementById("toast");
+let openP = null;
+const wait = ms => new Promise(r => setTimeout(r, ms));
+function posterBox(p) {   // dónde está el cartel en pantalla (centro, ancho y giro)
+  const r = p.el.getBoundingClientRect(), w = 380 * SCALE * (.9);
+  return { cx: r.left + r.width / 2, cy: r.top + r.height / 2, w, rot: sorted ? 0 : p.r };
+}
+function place(el, b) { el.style.width = b.w + "px"; el.style.left = (b.cx - b.w / 2) + "px"; el.style.top = (b.cy - b.w * 1.4136 / 2) + "px"; el.style.transform = `rotate(${b.rot}deg)`; }
+function showToast(t) { toast.textContent = t; toast.classList.add("show"); clearTimeout(toast._t); toast._t = setTimeout(() => toast.classList.remove("show"), 2200); }
+async function openCase(p) {
+  if (!document.getElementById("tpl-" + p.id)) { showToast(lang === "es" ? "Este case study llega muy pronto" : "This case study is coming soon"); return; }
+  if (openP) return; openP = p; fill(p);
+  const flyer = new Image(); flyer.src = `assets/${p.id}/00.webp`; flyer.className = "flyer"; document.body.appendChild(flyer);
+  place(flyer, posterBox(p)); p.el.style.visibility = "hidden";
+  caseEl.style.display = "block"; caseEl.scrollTop = 0; casePoster.style.visibility = "hidden"; caseEl.setAttribute("aria-hidden", "false");
+  document.body.classList.add("reading");
+  await wait(30);
+  const r = casePoster.getBoundingClientRect(), tw = Math.min(r.width, r.height / 1.4136);
+  place(flyer, { cx: r.left + r.width / 2, cy: r.top + tw * 1.4136 / 2, w: tw, rot: 0 });
+  await wait(520); caseEl.classList.add("show"); await wait(200);
+  casePoster.style.visibility = "visible"; flyer.remove(); document.getElementById("case-back").focus({ preventScroll: true });
+}
+function fill(p) {   // pone el contenido y la marca del proyecto
+  caseEl.className = caseEl.className.replace(/\bt-\S+/g, "").trim() + " t-" + p.id;
+  casePoster.src = `assets/${p.id}/00.webp`; casePoster.alt = T[lang].poster + p[lang][0];
+  document.getElementById("case-article").innerHTML = (document.getElementById("tpl-" + p.id + (lang === "en" ? "-en" : "")) || document.getElementById("tpl-" + p.id)).innerHTML;
+}
+async function nextCase(id) {   // pasar al siguiente cartel sin volver a la mesa
+  const p = PROJECTS.find(q => q.id === id); if (!p || !openP) return;
+  const art = document.getElementById("case-article"); art.classList.add("fade"); await wait(300);
+  openP.el.style.visibility = ""; p.el.style.visibility = "hidden"; openP = p; fill(p);
+  caseEl.scrollTo({ top: 0 }); art.classList.remove("fade");
+}
+async function closeCase() {
+  const p = openP; if (!p) return;
+  caseEl.scrollTo({ top: 0 });
+  const r = casePoster.getBoundingClientRect(), tw = Math.min(r.width, r.height / 1.4136);
+  const flyer = new Image(); flyer.src = `assets/${p.id}/00.webp`; flyer.className = "flyer"; document.body.appendChild(flyer);
+  flyer.style.transition = "none"; place(flyer, { cx: r.left + r.width / 2, cy: r.top + tw * 1.4136 / 2, w: tw, rot: 0 });
+  caseEl.classList.remove("show"); document.body.classList.remove("reading");
+  await wait(30); flyer.style.transition = ""; place(flyer, posterBox(p));
+  await wait(680); p.el.style.visibility = ""; flyer.remove();
+  caseEl.style.display = "none"; caseEl.setAttribute("aria-hidden", "true"); openP = null; p.el.focus({ preventScroll: true });
+}
+PROJECTS.forEach(p => {
+  p.el.addEventListener("click", () => openCase(p));
+  p.el.addEventListener("keydown", e => { if (e.key === "Enter") openCase(p); });
+});
+caseEl.addEventListener("click", e => { if (e.target.closest(".js-back")) closeCase(); const n = e.target.closest(".js-next"); if (n) nextCase(n.dataset.next); });
+document.addEventListener("keydown", e => { if (e.key === "Escape") { if (lightbox.classList.contains("show")) lightbox.classList.remove("show"); else closeCase(); } });
+const lbImg = lightbox.querySelector("img"); let lbList = [], lbI = 0, lbSwiped = false, lbX = null;
+function lbRender() { lbImg.src = lbList[lbI]; lightbox.classList.toggle("multi", lbList.length > 1); lightbox.querySelector(".count").textContent = (lbI + 1) + " / " + lbList.length;
+  if (lbList.length > 1) [1, -1].forEach(d => { new Image().src = lbList[(lbI + d + lbList.length) % lbList.length]; }); }
+function lbShow(list, i) { lbList = list; lbI = Math.max(0, i); lbRender(); lightbox.classList.add("show"); }
+function lbStep(d) { if (lbList.length < 2) return; lbI = (lbI + d + lbList.length) % lbList.length; lbRender(); }
+caseEl.addEventListener("click", e => { if (e.target.classList.contains("zoom")) { const z = [...caseEl.querySelectorAll(".zoom")]; lbShow(z.map(x => x.src), z.indexOf(e.target)); } });
+lightbox.onclick = e => {
+  if (lbSwiped) { lbSwiped = false; return; }
+  const n = e.target.closest(".nav"); if (n) return lbStep(n.classList.contains("next") ? 1 : -1);
+  if (e.target === lbImg && lbList.length > 1) { const r = lbImg.getBoundingClientRect(); return lbStep(e.clientX < r.left + r.width / 2 ? -1 : 1); }
+  lightbox.classList.remove("show");
+};
+lightbox.addEventListener("touchstart", e => { lbX = e.touches[0].clientX; lbSwiped = false; }, { passive: true });
+lightbox.addEventListener("touchend", e => { if (lbX === null) return; const dx = e.changedTouches[0].clientX - lbX; lbX = null; if (Math.abs(dx) > 40) { lbSwiped = true; lbStep(dx < 0 ? 1 : -1); setTimeout(() => lbSwiped = false, 400); } });
+document.addEventListener("keydown", e => { if (!lightbox.classList.contains("show")) return;
+  if (e.key === "ArrowRight" || e.key === "ArrowLeft") { e.preventDefault(); e.stopImmediatePropagation(); lbStep(e.key === "ArrowRight" ? 1 : -1); } }, true);
+// móvil: los carteles de la lista también abren su case study (sin vuelo)
+document.getElementById("list").addEventListener("click", e => {
+  const fig = e.target.closest("figure"); if (!fig) return;
+  if (fig.dataset.mirror) return openMirror();
+  if (fig.dataset.obj === "book") return openBook();
+  if (fig.dataset.obj === "cam") return openGallery("fotos");   // en móvil la cámara grande no cabe: directo a la galería
+  const p = PROJECTS[[...fig.parentNode.children].indexOf(fig)];
+  if (!document.getElementById("tpl-" + p.id)) { showToast(lang === "es" ? "Este case study llega muy pronto" : "This case study is coming soon"); return; }
+  openP = p; fill(p); caseEl.style.display = "block"; caseEl.scrollTop = 0; requestAnimationFrame(() => caseEl.classList.add("show"));
+});
+
+/* ---------- cámara: foto al azar al pasar el ratón; al pulsar, galerías ---------- */
+const GAL = [{"i": 0, "g": "wineup", "w": 1050, "h": 1400}, {"i": 1, "g": "wineup", "w": 1050, "h": 1400}, {"i": 2, "g": "wineup", "w": 1050, "h": 1400}, {"i": 3, "g": "wineup", "w": 1050, "h": 1400}, {"i": 4, "g": "wineup", "w": 1050, "h": 1400}, {"i": 5, "g": "wineup", "w": 1050, "h": 1400}, {"i": 6, "g": "wineup", "w": 1050, "h": 1400}, {"i": 7, "g": "wineup", "w": 1050, "h": 1400}, {"i": 8, "g": "wineup", "w": 1050, "h": 1400}, {"i": 9, "g": "wineup", "w": 1050, "h": 1400}, {"i": 10, "g": "wineup", "w": 1050, "h": 1400}, {"i": 11, "g": "wineup", "w": 1050, "h": 1400}, {"i": 12, "g": "wineup", "w": 1050, "h": 1400}, {"i": 13, "g": "wineup", "w": 1050, "h": 1400}, {"i": 14, "g": "wineup", "w": 1050, "h": 1400}, {"i": 15, "g": "wineup", "w": 1050, "h": 1400}, {"i": 16, "g": "wineup", "w": 1050, "h": 1400}, {"i": 17, "g": "wineup", "w": 1050, "h": 1400}, {"i": 18, "g": "wineup", "w": 1050, "h": 1400}, {"i": 19, "g": "wineup", "w": 1050, "h": 1400}, {"i": 20, "g": "wineup", "w": 1050, "h": 1400}, {"i": 21, "g": "wineup", "w": 1050, "h": 1400}, {"i": 22, "g": "wineup", "w": 1050, "h": 1400}, {"i": 23, "g": "wineup", "w": 1050, "h": 1400}, {"i": 24, "g": "wineup", "w": 1050, "h": 1400}, {"i": 25, "g": "wineup", "w": 1050, "h": 1400}, {"i": 26, "g": "wineup", "w": 1050, "h": 1400}, {"i": 27, "g": "wineup", "w": 1050, "h": 1400}, {"i": 28, "g": "wineup", "w": 1050, "h": 1400}, {"i": 29, "g": "wineup", "w": 1050, "h": 1400}, {"i": 30, "g": "wineup", "w": 1050, "h": 1400}, {"i": 31, "g": "liebre", "w": 792, "h": 1400}, {"i": 32, "g": "liebre", "w": 792, "h": 1400}, {"i": 33, "g": "liebre", "w": 792, "h": 1400}, {"i": 34, "g": "liebre", "w": 792, "h": 1400}, {"i": 35, "g": "liebre", "w": 1050, "h": 1400}, {"i": 36, "g": "liebre", "w": 1050, "h": 1400}, {"i": 37, "g": "liebre", "w": 792, "h": 1400}, {"i": 38, "g": "liebre", "w": 792, "h": 1400}, {"i": 39, "g": "liebre", "w": 787, "h": 1400}, {"i": 40, "g": "liebre", "w": 1050, "h": 1400}, {"i": 41, "g": "liebre", "w": 792, "h": 1400}];
+const VIDS = [0, 1, 2];
+const cam = make("", "camera");
+setTimeout(() => { cam.insertAdjacentHTML("beforeend", `<span class="otag" data-i18n="cam2">${T[lang].cam2}</span>`); }, 0);
+cam.innerHTML = `<img src="assets/camara/00.webp" alt=""><div class="screen"><img alt=""><div class="osd"><div><span>▮▮▮▯</span><span>101-00</span></div><div><span>◀▶</span><span>2026 11 14</span></div></div></div><span class="hint" data-i18n="look" style="left:230px;top:-4px">mira</span>`;
+cam.setAttribute("aria-label", T[lang].cam2);
+const camImg = cam.querySelector(".screen img"), camNum = cam.querySelectorAll(".osd span")[1];
+let lastShot = -1;
+function shoot() {
+  let i; do { i = Math.floor(Math.random() * GAL.length); } while (i === lastShot && GAL.length > 1);
+  lastShot = i; camImg.src = `assets/gal/fotos/${String(i).padStart(2, "0")}_t.webp`; camNum.textContent = "101-" + String(i + 1).padStart(4, "0");
+}
+GAL.slice(0, 8).forEach(g => { const im = new Image(); im.src = `assets/gal/fotos/${String(g.i).padStart(2, "0")}_t.webp`; });
+let shotTimer = 0;
+const camOn = () => { shoot(); clearInterval(shotTimer); shotTimer = setInterval(shoot, 5000); };
+const camOff = () => clearInterval(shotTimer);
+cam.addEventListener("mouseenter", camOn); cam.addEventListener("focus", camOn);
+cam.addEventListener("mouseleave", camOff); cam.addEventListener("blur", camOff); cam.addEventListener("click", camOff);
+const gallery = document.getElementById("gallery"), galBody = document.getElementById("gal-body");
+const camzoom = document.getElementById("camzoom"), big = camzoom.querySelector(".big"), lcdItems = [...camzoom.querySelectorAll(".lcd .items button")];
+let camOpen = false;
+function camFrom() {   // transform que deja la cámara grande encima de la pequeña de la mesa
+  const r = cam.getBoundingClientRect(), bw = big.offsetWidth, bh = big.offsetHeight;
+  const k = 320 * SCALE * (sorted ? .85 : 1) / bw, rot = sorted ? 0 : -6;
+  const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+  return `translate(${cx}px, ${cy}px) rotate(${rot}deg) scale(${k}) translate(${-bw / 2}px, ${-bh / 2}px)`;
+}
+const camCenter = () => `translate(${innerWidth / 2}px, ${innerHeight / 2}px) rotate(0deg) scale(1) translate(${-big.offsetWidth / 2}px, ${-big.offsetHeight / 2}px)`;
+function select(i) { lcdItems.forEach((b, j) => b.classList.toggle("sel", j === i)); }
+async function openCamUI() {
+  if (camOpen) return; camOpen = true;
+  document.getElementById("lcd-f").src = camImg.src || "assets/gal/fotos/05_t.webp"; select(0);
+  big.classList.remove("enter"); big.style.left = big.style.top = "0px";
+  camzoom.style.display = "block"; camzoom.setAttribute("aria-hidden", "false");
+  big.style.transition = "none"; big.style.transform = camFrom(); cam.style.visibility = "hidden";
+  await wait(20); big.style.transition = ""; camzoom.classList.add("show"); big.style.transform = camCenter();
+  lcdItems[0].focus({ preventScroll: true });
+}
+async function closeCamUI(toGallery) {
+  if (!camOpen) return;
+  if (toGallery) {   // la cámara "entra" en su pantalla
+    const lcd = camzoom.querySelector(".lcd").getBoundingClientRect(), k = 3.2;
+    big.style.transformOrigin = `${(lcd.left + lcd.width / 2 - big.getBoundingClientRect().left)}px ${(lcd.top + lcd.height / 2 - big.getBoundingClientRect().top)}px`;
+    big.classList.add("enter"); big.style.transform = camCenter() + ` scale(${k})`;
+    openGallery(toGallery); await wait(480);
+  } else { camzoom.classList.remove("show"); big.style.transform = camFrom(); await wait(600); }
+  camzoom.style.display = "none"; camzoom.classList.remove("show"); big.style.transformOrigin = "0 0"; camzoom.setAttribute("aria-hidden", "true");
+  cam.style.visibility = ""; camOpen = false;
+}
+cam.addEventListener("click", openCamUI); cam.addEventListener("keydown", e => { if (e.key === "Enter") openCamUI(); });
+document.getElementById("m-cam").onclick = () => { document.getElementById("menu").classList.remove("open"); openCamUI(); };
+lcdItems.forEach((b, i) => { b.addEventListener("mouseenter", () => select(i)); b.addEventListener("click", () => closeCamUI(b.dataset.g)); });
+camzoom.addEventListener("click", e => { if (e.target === camzoom || e.target.closest(".x")) closeCamUI(); });
+camzoom.addEventListener("click", e => {   // flechas y OK de la pantalla + rueda de la cámara
+  const b = e.target.closest("[data-k]"); if (!b || !camOpen) return;
+  const k = b.dataset.k, i = Math.max(0, lcdItems.findIndex(x => x.classList.contains("sel")));
+  if (k === "ok") closeCamUI(lcdItems[i].dataset.g); else if (k === "esc") closeCamUI(); else select(1 - i);
+});
+document.addEventListener("keydown", e => {
+  if (!camOpen) return;
+  const i = lcdItems.findIndex(b => b.classList.contains("sel"));
+  if (e.key === "ArrowRight" || e.key === "ArrowLeft") { e.preventDefault(); select(1 - i); lcdItems[1 - i].focus(); }
+  if (e.key === "Enter") { e.preventDefault(); closeCamUI(lcdItems[i].dataset.g); }
+  if (e.key === "Escape") closeCamUI();
+});
+function openGallery(g) {
+  const pad = i => String(i).padStart(2, "0");
+  const grid = grp => GAL.filter(x => x.g === grp).map(x => `<img src="assets/gal/fotos/${pad(x.i)}_t.webp" data-full="assets/gal/fotos/${pad(x.i)}.webp" alt="" loading="lazy" width="${x.w}" height="${x.h}">`).join("");
+  galBody.innerHTML = g === "fotos"
+    ? `<div class="grp"><h4>${T[lang].gw}</h4><div class="grid">${grid("wineup")}</div></div><div class="grp"><h4>${T[lang].gl}</h4><div class="grid">${grid("liebre")}</div></div>`
+    : `<div class="grp"><h4>${T[lang].gv}</h4><div class="vids">${VIDS.map(v => `<video src="assets/gal/videos/v${v}.mp4" poster="assets/gal/videos/v${v}_t.webp" muted loop playsinline autoplay controls preload="metadata"></video>`).join("")}</div></div>`;
+  gallery.querySelectorAll("header [data-g]").forEach(b => b.setAttribute("aria-pressed", b.dataset.g === g));
+  gallery.style.display = "block"; gallery.scrollTop = 0; gallery.setAttribute("aria-hidden", "false"); requestAnimationFrame(() => gallery.classList.add("show"));
+}
+function closeGallery() { gallery.classList.remove("show"); gallery.setAttribute("aria-hidden", "true"); setTimeout(() => { gallery.style.display = "none"; galBody.innerHTML = ""; }, 300); }
+gallery.addEventListener("click", e => {
+  if (e.target.closest(".close")) return closeGallery();
+  const b = e.target.closest("header [data-g]"); if (b) return openGallery(b.dataset.g);
+  if (e.target.dataset.full) { const z = [...galBody.querySelectorAll("[data-full]")]; lbShow(z.map(x => x.dataset.full), z.indexOf(e.target)); }
+});
+document.addEventListener("keydown", e => { if (e.key !== "Escape" || camOpen) return; if (lightbox.classList.contains("show")) return; if (gallery.classList.contains("show")) closeGallery(); });
+// prototipo dentro del marco: solo en tu dominio; en la vista previa de Claude (o en local) abre Figma en otra pestaña
+const CAN_EMBED = location.protocol.startsWith("http") && !/claude\.ai|claudeusercontent|anthropic/.test(location.hostname);
+caseEl.addEventListener("click", e => {
+  const a = e.target.closest(".js-proto"); if (!a || !CAN_EMBED) return;
+  e.preventDefault();
+  const f = document.createElement("iframe"); f.src = a.dataset.embed; f.allowFullscreen = true; f.title = T[lang].figma;
+  a.parentNode.appendChild(f); a.remove();
+});
+addEventListener("resize", fit); fit(); texts();
+
+/* ---------- cuaderno: sobre mí ---------- */
+// letras de pegatina: cada letra con su giro y su salto, como el CELIA de la tapa
+const stl = (w, st) => `<div class="stl" style="${st}" role="heading" aria-label="${w}">${[...w].map((c, i) =>
+  `<span aria-hidden="true" style="transform:translateY(${[0, .06, -.04, .08, -.02, .05][i % 6]}em) rotate(${[-6, 3, -2, 5, -4, 2][i % 6]}deg)">${c}</span>`).join("")}</div>`;
+const stk = (img, st, alt = "") => `<img class="st" src="assets/cuaderno/${img}" alt="${alt}" style="${st}">`;
+const star = st => `<svg class="st" viewBox="-6 -6 112 108" style="${st}" aria-hidden="true"><path d="M50 2 L62 36 L98 37 L69 58 L80 94 L50 72 L20 94 L31 58 L2 37 L38 36 Z" fill="#e2475a" stroke="#fcfbf7" stroke-width="7" stroke-linejoin="round"/></svg>`;
+const ann = (st, d, vb = "0 0 100 60") => `<svg class="ann" viewBox="${vb}" style="${st}" aria-hidden="true"><path d="${d}" vector-effect="non-scaling-stroke"/></svg>`;
+// páginas diseñadas en Canva (exportadas como imagen); en la última, zonas clicables sobre las pegatinas
+const hot = (act, st, label) => `<a class="hot" data-act="${act}" href="#" style="${st}" aria-label="${label}"></a>`;
+const mkPages = () => { const en = lang === "en"; const P = [1,2,3,4,5,6].map(n => ({ cls: "img", html: `<img src="assets/cuaderno/bg${n}_1400.webp" srcset="assets/cuaderno/bg${n}_1400.webp 1400w, assets/cuaderno/bg${n}.webp 2200w" sizes="(max-width: 760px) 92vw, min(38vw, calc((100vh - 170px) * .707))" alt="" draggable="false"><img class="tx" src="assets/cuaderno/tx${n}_${en ? "en" : "es"}.svg" alt="" draggable="false">` +
+  (n === 6 ? hot("talk", "left:26.8%;top:54.9%;width:46.3%;height:13.8%", en ? "Say hello" : "Escríbeme") + hot("cv", "left:28.8%;top:67.5%;width:46.2%;height:12.5%", en ? "Download CV" : "Descargar CV") : "") }));
+  P[0].html = P[0].html.replace('alt=""', en ? 'alt="Celia Barbecho, product designer: LinkedIn version and real version"' : 'alt="Celia Barbecho, product designer: versión LinkedIn y versión real"'); return P; };
+let PAGES = mkPages();
+const bookwrap = document.getElementById("bookwrap"), book = document.getElementById("book"), bookpos = document.getElementById("bookpos");
+const bookMob = matchMedia("(max-width: 760px)");
+let leaves = [], turned = 0, bookOpen = false, bookBusy = false;
+const pgHTML = (k, side) => `<div class="pg ${side} ${PAGES[k].cls || ""}">${PAGES[k].html}</div>`;
+function buildBook() {
+  PAGES = mkPages();
+  if (bookMob.matches) { book.innerHTML = PAGES.map((p, k) => pgHTML(k, k % 2 ? "r" : "l")).join(""); leaves = []; return; }
+  // hojas: la 0 es la tapa (delante) con el interior detrás; cada hoja lleva una página derecha delante y la izquierda siguiente detrás
+  let h = '<div class="bg"></div>' + pgHTML(5, "r base");
+  for (let i = 0; i < 3; i++) h += `<div class="leaf"><div class="front">${i ? pgHTML(2 * i - 1, "r") : '<div class="cover"></div>'}</div><div class="back">${pgHTML(2 * i, "l")}</div></div>`;
+  book.innerHTML = h; leaves = [...book.querySelectorAll(".leaf")]; turned = 0; stackLeaves();
+}
+// orden real en 3D (z-index no sirve dentro de preserve-3d y hacía parpadear las hojas)
+const leafT = (i, up, top) => `translateZ(${top ? leaves.length * 2 + 4 : (up ? i + 1 : leaves.length - i) * 1.5 + 1}px) rotateY(${up ? -180 : 0}deg)`;
+function stackLeaves() { leaves.forEach((l, i) => { l.style.transform = leafT(i, i < turned); l.classList.toggle("turned", i < turned); }); }
+function updNav() {
+  const [p, n] = document.querySelectorAll("#booknav button");
+  p.disabled = turned <= 1; n.disabled = turned >= leaves.length; bookpos.textContent = `${Math.max(turned, 1)}/${leaves.length}`;
+}
+async function turn(dir) {
+  const i = dir > 0 ? turned : turned - 1;
+  if (bookBusy || i < (dir > 0 ? 0 : 1) || i >= leaves.length) return;
+  bookBusy = true; const l = leaves[i]; l.style.transform = leafT(i, dir > 0, true);
+  l.classList.toggle("turned", dir > 0); turned += dir; updNav();
+  await wait(820); stackLeaves(); bookBusy = false;
+}
+const bookPW = () => book.offsetWidth / 2;
+function bookFrom() {   // deja la tapa del libro encima del cuaderno de la mesa
+  const r = nb.getBoundingClientRect(), pw = bookPW(), k = 300 * .714 * SCALE / pw;
+  return `translate(${r.left + r.width / 2 - (innerWidth / 2 + pw / 2)}px, ${r.top + r.height / 2 - innerHeight / 2}px) rotate(-11deg) scale(${k})`;
+}
+async function openBook() {
+  if (bookOpen || bookBusy) return; bookOpen = true;
+  document.getElementById("menu").classList.remove("open");
+  buildBook(); bookwrap.style.display = "block"; bookwrap.setAttribute("aria-hidden", "false");
+  if (bookMob.matches) { await wait(20); bookwrap.classList.add("show", "open"); bookwrap.scrollTop = 0; return; }
+  book.style.transition = "none"; book.style.transform = bookFrom(); nb.style.visibility = "hidden";
+  await wait(20); book.style.transition = ""; bookwrap.classList.add("show");
+  book.style.transform = `translate(${-bookPW() / 2}px, 0)`;
+  await wait(560); book.style.transform = "none"; turn(1); bookwrap.classList.add("open");
+  await wait(560); if (bookOpen) bookwrap.classList.add("opening");   // el libro abierto aparece cuando la tapa ya está al otro lado
+}
+async function closeBook() {
+  if (!bookOpen) return; bookwrap.classList.remove("open");
+  if (!bookMob.matches) {
+    while (bookBusy) await wait(50);
+    leaves.forEach(l => { l.style.transition = "transform .55s cubic-bezier(.5,0,.3,1)"; l.classList.remove("turned"); });
+    turned = 0; stackLeaves(); bookwrap.classList.remove("opening"); book.style.transform = `translate(${-bookPW() / 2}px, 0)`;
+    await wait(560); book.style.transform = bookFrom();
+  }
+  bookwrap.classList.remove("show"); await wait(560);
+  bookwrap.style.display = "none"; bookwrap.setAttribute("aria-hidden", "true"); nb.style.visibility = ""; bookOpen = false;
+}
+bookwrap.addEventListener("click", e => {
+  const a = e.target.closest("[data-act]");
+  if (a) {
+    e.preventDefault(); const act = a.dataset.act;
+    if (act === "close") closeBook(); else if (act === "next") turn(1); else if (act === "prev") turn(-1);
+    else if (act === "talk") closeBook().then(() => openContact(true));
+    else if (act === "cv") showToast(T[lang].cvsoon);
+    return;
+  }
+  const l = e.target.closest(".leaf");
+  if (l) turn(l.classList.contains("turned") ? -1 : 1);
+  else if (e.target === bookwrap) closeBook();
+});
+nb.addEventListener("click", openBook); nb.addEventListener("keydown", e => { if (e.key === "Enter") openBook(); });
+document.getElementById("m-about").onclick = openBook;
+document.addEventListener("keydown", e => {
+  if (!bookOpen) return;
+  if (e.key === "Escape") closeBook(); else if (e.key === "ArrowRight") turn(1); else if (e.key === "ArrowLeft") turn(-1);
+});
+
+/* ---------- espejo: cómo lo hice ---------- */
+const mw = document.getElementById("mw"), mwBAs = [...mw.querySelectorAll(".ba")], mwCrumples = [...mw.querySelectorAll(".crumple")];
+let mwOpen = false, mwTimer = 0;
+const mwfly = document.getElementById("mwfly"), mwback = document.getElementById("mwback");
+function mwClipTo(r) {   // recorte del panel a un rectángulo de la pantalla
+  mw.style.setProperty("--t", Math.max(0, r.top) + "px"); mw.style.setProperty("--l", Math.max(0, r.left) + "px");
+  mw.style.setProperty("--r", Math.max(0, innerWidth - r.right) + "px"); mw.style.setProperty("--b", Math.max(0, innerHeight - r.bottom) + "px");
+}
+const mwClipFull = () => ["--t", "--r", "--b", "--l"].forEach(k => mw.style.setProperty(k, "0px"));
+function mwFrom() {   // el espejo grande encima del pequeño de la mesa
+  const r = mirror.getBoundingClientRect(), w = mirror.offsetWidth, h = mirror.offsetHeight;
+  const k = .9, rot = sorted ? 0 : MIRROR.r;
+  return `translate(${r.left + r.width / 2}px, ${r.top + r.height / 2}px) rotate(${rot}deg) scale(${SCALE * k}) translate(${-w / 2}px, ${-h / 2}px)`;
+}
+function mwCenter() {
+  const w = mirror.offsetWidth, h = mirror.offsetHeight, s = Math.min(innerHeight * .88 / h, innerWidth * .8 / w);
+  return `translate(${innerWidth / 2}px, ${innerHeight / 2}px) rotate(0deg) scale(${s}) translate(${-w / 2}px, ${-h / 2}px)`;
+}
+let mwBusy = false;
+async function openMirror() {
+  if (mwOpen || mwBusy) return; mwOpen = mwBusy = true;
+  document.getElementById("menu").classList.remove("open");
+  if (bookMob.matches) {   // móvil: sin vuelo, entra directamente
+    mw.style.transition = "none"; mwClipFull(); mw.style.display = "block"; mw.scrollTop = 0; mw.setAttribute("aria-hidden", "false");
+    mw.querySelectorAll(".in").forEach(n => n.classList.toggle("cur", n.dataset.l === lang));
+    await wait(30); mw.style.transition = ""; mw.classList.add("open");
+    let f = 0, d = 1; clearInterval(mwTimer);
+    mwTimer = setInterval(() => { f += d; if (f === 7 || f === 0) d = -d; mwCrumples.forEach(c => c.src = `assets/try/${String(f).padStart(2, "0")}.webp`); }, 110);
+    mwBusy = false; return;
+  }
+  mwfly.style.width = mirror.offsetWidth + "px"; mwfly.classList.remove("fogged");
+  mwfly.style.transition = "none"; mwfly.style.transform = mwFrom(); mwfly.style.display = "block"; mwback.style.display = "block";
+  mirror.style.visibility = "hidden";
+  await wait(30); mwfly.style.transition = ""; mwback.classList.add("show"); mwfly.style.transform = mwCenter();
+  await wait(680); mwfly.classList.add("fogged"); await wait(380);   // se empaña el cristal
+  mw.style.transition = "none"; mwClipTo(mwfly.querySelector(".fg").getBoundingClientRect());
+  mw.style.display = "block"; mw.scrollTop = 0; mw.classList.add("fogging"); mw.setAttribute("aria-hidden", "false");
+  await wait(30); mw.style.transition = ""; mwClipFull(); mw.classList.remove("fogging"); mw.classList.add("open");   // entras al otro lado
+  mw.querySelector(".x").focus({ preventScroll: true }); mw.querySelectorAll(".in").forEach(n => n.classList.toggle("cur", n.dataset.l === lang));
+  let f = 0, d = 1; clearInterval(mwTimer);   // arrugado en bucle (ida y vuelta)
+  mwTimer = setInterval(() => { f += d; if (f === 7 || f === 0) d = -d; mwCrumples.forEach(c => c.src = `assets/try/${String(f).padStart(2, "0")}.webp`); }, 110);
+  await wait(760); mwBusy = false;
+}
+async function closeMirror() {
+  if (!mwOpen || mwBusy) return;
+  if (bookMob.matches || mwfly.style.display !== "block") { mw.classList.remove("open"); await wait(350); mw.style.display = "none"; mw.setAttribute("aria-hidden", "true"); clearInterval(mwTimer); mwOpen = false; return; }
+  mwBusy = true; mw.classList.remove("open");
+  mw.classList.add("fogging"); mwClipTo(mwfly.querySelector(".fg").getBoundingClientRect());   // vuelves a salir por el cristal
+  await wait(760);
+  mw.style.display = "none"; mw.classList.remove("fogging"); mw.setAttribute("aria-hidden", "true"); clearInterval(mwTimer);
+  mwfly.classList.remove("fogged"); await wait(300);
+  mwback.classList.remove("show"); mwfly.style.transform = mwFrom(); await wait(660);
+  mwfly.style.display = "none"; mwback.style.display = "none"; mirror.style.visibility = ""; mwOpen = mwBusy = false;
+}
+const OVLS = ["case", "camzoom", "gallery", "bookwrap", "mw"].map(id => document.getElementById(id));
+const updOvl = () => document.body.classList.toggle("ovl", OVLS.some(o => o && o.style.display && o.style.display !== "none"));
+const ovlObs = new MutationObserver(updOvl); OVLS.forEach(o => o && ovlObs.observe(o, { attributes: true, attributeFilter: ["style"] }));
+const mwcur = document.getElementById("mwcur");
+mw.addEventListener("pointermove", e => { if (e.pointerType !== "mouse") return; mw.classList.add("hovering"); mwcur.style.transform = `translate(${e.clientX + 7}px, ${e.clientY + 9}px)`; });
+mw.addEventListener("pointerleave", () => mw.classList.remove("hovering"));
+mirror.addEventListener("click", openMirror); mirror.addEventListener("keydown", e => { if (e.key === "Enter") openMirror(); });
+document.querySelector('#menu [data-i18n="howto"]').onclick = openMirror;
+mw.addEventListener("click", e => {
+  const b = e.target.closest("[data-mw]"); if (!b) return;
+  if (b.dataset.mw === "close") closeMirror(); else if (b.dataset.mw === "talk") closeMirror().then(() => openContact(true));
+});
+document.addEventListener("keydown", e => { if (mwOpen && e.key === "Escape") closeMirror(); });
+// antes / después
+mwBAs.forEach(ba => {
+  const set = p => { p = Math.max(0, Math.min(100, p)); ba.style.setProperty("--p", p + "%"); ba.setAttribute("aria-valuenow", Math.round(p)); };
+  const move = e => { const r = ba.getBoundingClientRect(); set((e.clientX - r.left) / r.width * 100); };
+  ba.addEventListener("pointerdown", e => { ba.setPointerCapture(e.pointerId); move(e); });
+  ba.addEventListener("pointermove", e => { if (e.buttons) move(e); });
+  ba.addEventListener("keydown", e => { const v = +ba.getAttribute("aria-valuenow");
+    if (e.key === "ArrowLeft") set(v - 5); else if (e.key === "ArrowRight") set(v + 5); else return; e.preventDefault(); });
+});
+</script>
+</body>
+</html>
