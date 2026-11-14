@@ -418,6 +418,8 @@
   #mw .ux { display: grid; grid-template-columns: 1fr 1fr; gap: 48px 60px; margin-top: 20px; }
   #mw .ux h4 { font: 400 28px/1.05 Anton, sans-serif; color: var(--ink); margin-bottom: 10px; }
   #mw .ux h4 i { font-style: normal; color: var(--pink); }
+  #mw .ux .wide { grid-column: 1 / -1; } #mw .ux .wide p { max-width: 36em; }
+  #mw .drops:has(.drop:nth-child(4)) { grid-template-columns: repeat(2, 1fr); }
   #mw .ux p { color: #cfc8bd; max-width: 26em; }
   #mw .end { text-align: left; }
   #mw .end h3 { max-width: 14em; }
@@ -1110,6 +1112,7 @@
         <div class="drop"><b>Yoyo, un personaje que te guiaba</b><span>Me encantaba, pero acababa siendo más protagonista que los proyectos.</span></div>
         <div class="drop"><b>Un interruptor para apagar la luz</b><span>No encontré qué enseñar a oscuras que aportara algo, por ejemplo en la landing de WineUp.</span></div>
         <div class="drop"><b>Una experiencia larga y narrativa</b><span>Si lo complico demasiado, saboteo la experiencia de quien lo revisa.</span></div>
+        <div class="drop"><b>Un cuaderno que no se abría a la primera</b><span>Quería un primer plano de la portada antes de abrirlo. Era bonito, pero era un clic más sin nada a cambio, y la portada ya se ve desde la mesa.</span></div>
       </div>
       <p class="hand" style="margin-top:44px">lo que se quedó por el camino ↑</p>
     </section>
@@ -1128,7 +1131,7 @@
             <figure><img class="crumple" src="assets/try/00.webp" alt="Animación del cartel arrugándose" style="width:300px;box-shadow:none;margin-bottom:-30px"><figcaption>el hover de los carteles, en bucle</figcaption></figure>
           </div>
           <p class="hand" style="margin-top:22px">y el reflejo de este espejo es la foto de un techo de verdad, desenfocada</p></div></li>
-        <li><div><span class="tool">Canva</span><p class="body">El cuaderno lo maqueté en Canva, con mis fotos y uno de mis cuadros. Después la portada pasó por Blender para que pareciera un cuaderno de verdad sobre la mesa.</p>
+        <li><div><span class="tool">Canva</span><p class="body">El cuaderno lo maqueté en Canva, con mis fotos y uno de mis cuadros, y lo traduje entero al inglés. Para que el texto se lea nítido a cualquier tamaño, las letras van como vector encima de los papeles. Después la portada pasó por Blender para que pareciera un cuaderno de verdad sobre la mesa.</p>
           <div class="row"><img src="assets/cuaderno/pag2.webp" alt="Página del cuaderno: ¡Hola!" style="width:150px;transform:rotate(-2deg)"><img src="assets/cuaderno/pag3.webp" alt="Página del cuaderno: lo que he hecho" style="width:150px;transform:rotate(2deg)"></div></div></li>
         <li><div><span class="tool">Higgsfield</span><p class="body">Las fotos y los vídeos que guarda la cámara los generé con Higgsfield.</p>
           <div class="row"><img src="assets/gal/fotos/03_t.webp" alt="" style="width:130px;transform:rotate(-2deg)"><img src="assets/gal/fotos/11_t.webp" alt="" style="width:130px;transform:rotate(3deg)"><img src="assets/gal/fotos/20_t.webp" alt="" style="width:130px;transform:rotate(-1deg)"></div></div></li>
@@ -1139,8 +1142,11 @@
     <section>
       <h3>Que lo creativo no estorbe</h3>
       <div class="ux">
+        <div class="wide"><h4>Primero, el <i>resultado</i></h4><p>Cada case study empieza por lo terminado: la web o el prototipo, para probarlo ahí mismo. El proceso viene después, para quien quiera saber cómo llegué.</p></div>
+        <div><h4>Probar sin salir</h4><p>La landing de WineUp y los prototipos se usan dentro de la página. En el móvil, el prototipo carga en el mismo mockup, a su tamaño, sin mandarte a otra pantalla.</p></div>
         <div><h4>Un botón para <i>ordenar</i></h4><p>Pone carteles y objetos rectos, en dos filas y al mismo tamaño. Si tienes prisa, no tienes que jugar.</p></div>
-        <div><h4>En el móvil, la mesa desaparece</h4><p>Solo carteles en columna y un menú. Con el pulgar manda la rapidez, no el efecto.</p></div>
+        <div><h4>En el móvil, la mesa se vuelve columna</h4><p>Los carteles primero y después los objetos, sin etiquetas. Arriba siempre está «Volver a la mesa», para no perderse nunca.</p></div>
+        <div><h4>La cabecera siempre a mano</h4><p>Idioma y contacto están en todas las pantallas, y mi nombre te devuelve a la mesa desde cualquier sitio.</p></div>
         <div><h4>Una llamada sin palabras</h4><p>El teléfono solo enseña mi nombre y los botones de descolgar y colgar, así funciona igual en español y en inglés.</p></div>
         <div><h4>Los carteles hablan solos</h4><p>No hay etiquetas encima del diseño: cada cartel se presenta solo, y el contexto está dentro de su case study.</p></div>
       </div>
@@ -1165,6 +1171,7 @@
         <div class="drop"><b>Yoyo, a character to guide you</b><span>I loved it, but it ended up stealing the spotlight from the projects.</span></div>
         <div class="drop"><b>A switch to turn off the light</b><span>I couldn't find anything worth showing in the dark, for example on the WineUp landing.</span></div>
         <div class="drop"><b>A long, narrative experience</b><span>If I make it too complicated, I sabotage the experience of whoever's reviewing it.</span></div>
+        <div class="drop"><b>A notebook that didn't open right away</b><span>I wanted a close-up of the cover before it opened. It was pretty, but it was one more click for nothing, and you can already see the cover from the desk.</span></div>
       </div>
       <p class="hand" style="margin-top:44px">what got left behind ↑</p>
     </section>
@@ -1183,7 +1190,7 @@
             <figure><img class="crumple" src="assets/try/00.webp" alt="Poster crumpling animation" style="width:300px;box-shadow:none;margin-bottom:-30px"><figcaption>the poster hover, on a loop</figcaption></figure>
           </div>
           <p class="hand" style="margin-top:22px">and the reflection in this mirror is a photo of a real ceiling, blurred</p></div></li>
-        <li><div><span class="tool">Canva</span><p class="body">I laid out the notebook in Canva, with my photos and one of my paintings. Then the cover went through Blender so it would look like a real notebook on the desk.</p>
+        <li><div><span class="tool">Canva</span><p class="body">I laid out the notebook in Canva, with my photos and one of my paintings, and translated all of it into English. To keep the text sharp at any size, the lettering sits as vectors on top of the paper. Then the cover went through Blender so it would look like a real notebook on the desk.</p>
           <div class="row"><img src="assets/cuaderno/pag2_en.webp" alt="Notebook page: Hello!" style="width:150px;transform:rotate(-2deg)"><img src="assets/cuaderno/pag3_en.webp" alt="Notebook page: what I've done" style="width:150px;transform:rotate(2deg)"></div></div></li>
         <li><div><span class="tool">Higgsfield</span><p class="body">I generated the photos and videos in the camera with Higgsfield.</p>
           <div class="row"><img src="assets/gal/fotos/03_t.webp" alt="" style="width:130px;transform:rotate(-2deg)"><img src="assets/gal/fotos/11_t.webp" alt="" style="width:130px;transform:rotate(3deg)"><img src="assets/gal/fotos/20_t.webp" alt="" style="width:130px;transform:rotate(-1deg)"></div></div></li>
@@ -1194,8 +1201,11 @@
     <section>
       <h3>Creative, but never in the way</h3>
       <div class="ux">
+        <div class="wide"><h4>The <i>result</i> comes first</h4><p>Every case study opens with the finished thing: the website or the prototype, to try right there. The process comes after, for anyone who wants to know how I got there.</p></div>
+        <div><h4>Try it without leaving</h4><p>The WineUp landing and the prototypes work inside the page. On mobile, the prototype loads in the same mockup, at its size, without sending you to another screen.</p></div>
         <div><h4>A button to <i>tidy up</i></h4><p>It straightens posters and objects into two rows, at the same size. If you're in a hurry, you don't have to play.</p></div>
-        <div><h4>On mobile, the desk disappears</h4><p>Just posters in a column and a menu. With a thumb, speed wins over effects.</p></div>
+        <div><h4>On mobile, the desk becomes a column</h4><p>Posters first, then the objects, no labels. “Back to the desk” is always at the top, so you never get lost.</p></div>
+        <div><h4>The header is always there</h4><p>Language and contact are on every screen, and my name takes you back to the desk from anywhere.</p></div>
         <div><h4>A call without words</h4><p>The phone only shows my name and the answer and decline buttons, so it works the same in Spanish and English.</p></div>
         <div><h4>The posters speak for themselves</h4><p>No labels on top of the design: each poster introduces itself, and the context lives inside its case study.</p></div>
       </div>
