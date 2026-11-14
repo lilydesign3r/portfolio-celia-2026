@@ -447,6 +447,10 @@
     #book .leaf, #booknav, #book .bg { display: none; }
   }
 
+  #protoov { position: fixed; inset: 0; z-index: 99; background: #f4f2ee; display: none; flex-direction: column; }
+  #protoov.show { display: flex; }
+  #protoov button { all: unset; cursor: pointer; flex: none; height: 52px; padding: 0 18px; display: flex; align-items: center; background: #1d1c1a; color: #fff; font: 600 15px Inter, sans-serif; }
+  #protoov iframe { flex: 1; width: 100%; border: 0; }
   #lightbox { position: fixed; inset: 0; z-index: 100; background: rgba(20,20,20,.88); display: none; align-items: center; justify-content: center; padding: 4vw; cursor: zoom-out; }
   #lightbox.show { display: flex; }
   #lightbox img { max-width: 100%; max-height: 100%; border-radius: 10px; user-select: none; -webkit-user-drag: none; }
@@ -1212,6 +1216,7 @@
   <div id="book"></div>
   <div id="booknav"><button type="button" data-act="prev" data-i18n="bprev">← Atrás</button><span id="bookpos">1/3</span><button type="button" data-act="next" data-i18n="bnext">Sigue →</button></div>
 </div>
+<div id="protoov" role="dialog" aria-modal="true"><button type="button"><b>← Volver al case study</b></button><iframe title="Prototipo de Figma" allowfullscreen></iframe></div>
 <div id="lightbox"><button class="nav prev" data-aria="padprev" aria-label="Anterior">‹</button><img alt=""><button class="nav next" data-aria="padnext" aria-label="Siguiente">›</button><span class="count"></span><button class="lbx" data-aria="closex" aria-label="Cerrar">✕</button></div>
 <div id="toast"></div>
 
@@ -1535,11 +1540,17 @@ gallery.addEventListener("click", e => {
 document.addEventListener("keydown", e => { if (e.key !== "Escape" || camOpen) return; if (lightbox.classList.contains("show")) return; if (gallery.classList.contains("show")) closeGallery(); });
 // prototipo dentro del marco: solo en tu dominio; en la vista previa de Claude (o en local) abre Figma en otra pestaña
 // en móvil nada se incrusta: la landing tumba Safari y los prototipos de Figma atrapan el scroll
+document.getElementById("protoov").querySelector("button").onclick = () => { const ov = document.getElementById("protoov"); ov.classList.remove("show"); ov.querySelector("iframe").src = "about:blank"; document.documentElement.style.overflow = ""; };
 const SMALL = () => matchMedia("(max-width: 900px), (pointer: coarse)").matches;
 const CAN_EMBED = location.protocol.startsWith("http") && !/claude\.ai|claudeusercontent|anthropic/.test(location.hostname);
 caseEl.addEventListener("click", e => {
   const a = e.target.closest(".js-proto"); if (!a || !CAN_EMBED) return;
-  if (SMALL()) return;   // en móvil los prototipos se abren a pantalla completa en otra pestaña: dentro de la página atrapan el scroll
+  if (SMALL()) {   // móvil: la landing en otra pestaña; los prototipos de Figma, a pantalla completa encima de la página (el enlace de Figma no abre bien en iPhone)
+    if (a.dataset.vw) return;
+    e.preventDefault(); const ov = document.getElementById("protoov");
+    ov.querySelector("iframe").src = a.dataset.embed; ov.querySelector("b").textContent = lang === "en" ? "← Back to the case study" : "← Volver al case study";
+    ov.classList.add("show"); document.documentElement.style.overflow = "hidden"; return;
+  }
   e.preventDefault();
   const box = a.parentNode, f = document.createElement("iframe"); f.allowFullscreen = true;
   let src = a.dataset.embed;
